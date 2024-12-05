@@ -1,5 +1,5 @@
 echo "Navigating to backend folder..."
-cd ./backend
+npm install
 
 echo "Starting server..."
 node server.js
