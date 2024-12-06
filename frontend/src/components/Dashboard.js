@@ -13,7 +13,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchApplications = async () => {
             try {
-                const response = await fetch('http://localhost:3000/api/app/getAll', {
+                const response = await fetch('https://job-tracker-production-e381.up.railway.app/api/app/getAll', {
                     method: 'POST',
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('authToken')}`,
