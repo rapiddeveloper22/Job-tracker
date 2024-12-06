@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
     const userEmail = localStorage.getItem('userEmail'); // Retrieve email from localStorage
-    // if (!userEmail) {
-    //     console.error("User email not found. Please log in.");
-    //     return;
-    // }
-    console.log(userEmail);
+    const authToken = localStorage.getItem('authToken');
+    const navigate = useNavigate();
+
+    console.log(userEmail + " " + authToken);
+
+    if (!authToken) {
+        alert("User email not found. Please log in.");
+        navigate('/login');
+        // return;
+    }
 
     const [applications, setApplications] = useState([]);
 
