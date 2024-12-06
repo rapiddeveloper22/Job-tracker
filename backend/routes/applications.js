@@ -29,8 +29,8 @@ router.post('/apply', authenticate, async (req, res) => {
 });
 
 // Fetch all applications (protected route)
-router.post('/getAll', authenticate, async (req, res) => {
-    const user_email = req.user.email; // Get email from token
+router.post('/getAll', async (req, res) => {
+    const user_email = req.body.user_email; // Get email from token
 
     try {
         const applications = await Application.find({ user_email });

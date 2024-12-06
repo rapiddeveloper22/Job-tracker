@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API_CONFIG from '../apiConfig';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -10,7 +11,7 @@ const Login = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch('https://job-tracker-production-e381.up.railway.app/api/auth/login', {
+            const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.AUTH.LOGIN}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),

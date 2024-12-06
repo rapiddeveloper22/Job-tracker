@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API_CONFIG from '../apiConfig';
 
 const Signup = () => {
     const [email, setEmail] = useState('');
@@ -10,19 +11,21 @@ const Signup = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch('https://job-tracker-production-e381.up.railway.app/api/auth/signup', {
+            const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.AUTH.SIGNUP}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
             });
 
             const data = await response.json();
-            if (data.success) {
-                localStorage.setItem('authToken', data.token); // Save token on login
-                alert('Signup successful! Please log in.');
-                navigate('/login'); // Redirect to Login page
+            console.log(data);
+            if (data.message) {
+                console.log(data);
+                localStorage.setItem('authToken', data.hashedPassword); // Save token on login
+                localStorage.setItem('userEmail', email); // Save email on login
+                navigate('/dashboard'); // Redirect to Login page
             } else {
-                alert(data.message || 'Signup failed!');
+                alert(data.error || 'Signup failed!');
             }
         } catch (err) {
             console.error('Signup error:', err);

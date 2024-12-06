@@ -4,6 +4,7 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
 import PrivacyPolicy from './components/PrivacyPolicy';
+import './styles.css';
 
 // Protected Route Component
 const ProtectedRoute = ({ element: Element, ...rest }) => {

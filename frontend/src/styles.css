@@ -78,3 +78,18 @@ tr:nth-child(even) {
 .link-button:hover {
     color: darkblue;
 }
+
+.logout-button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.logout-button:hover {
+    background-color: #ff1a1a;
+}

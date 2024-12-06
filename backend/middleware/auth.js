@@ -4,9 +4,10 @@ const JWT_SECRET = '1q_5G%%,5p?>~_q"[sAEWsXA^{$Yju2v5TG>fyFeuD^#[8V!fCBdIf@dgd:q
 // Middleware to verify JWT
 const authenticate = (req, res, next) => {
     const authHeader = req.headers.authorization;
-    console.log(authHeader);
+    // console.log(authHeader);
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        console.log("Inside unauthorized : " + authHeader);
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
