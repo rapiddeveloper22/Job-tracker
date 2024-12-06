@@ -1,55 +1,84 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-
 const router = express.Router();
 
-// JWT Secret Key (Use dotenv for secure storage)
-const JWT_SECRET = process.env.JWT_SECRET || '1q_5G%%,5p?>~_q"[sAEWsXA^{$Yju2v5TG>fyFeuD^#[8V!fCBdIf@dgd:q]ni';
+const JWT_SECRET = '1q_5G%%,5p?>~_q"[sAEWsXA^{$Yju2v5TG>fyFeuD^#[8V!fCBdIf@dgd:q]ni'; // Replace with a secure key
 
-// User Sign-Up
+// Register a new user
 router.post('/signup', async (req, res) => {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
+    }
+
     try {
+        // Check if the user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ message: 'Email already in use' });
+            return res.status(400).json({ error: 'User already exists' });
         }
 
-        const newUser = new User({ email, password });
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Save the user
+        const newUser = new User({ email, password: hashedPassword });
         await newUser.save();
 
-        const token = jwt.sign({ userId: newUser._id }, JWT_SECRET, { expiresIn: '7d' });
-        console.log(token);
-        res.status(201).json({ message: 'User registered successfully', token });
+        res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
-        console.error('Error signing up user:', error);
-        res.status(500).json({ message: 'Failed to register user' });
+        console.error('Error registering user:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
-// User Login
+// Login a user
 router.post('/login', async (req, res) => {
+    console.log("Login endpoint in Chrome extension backend");
     const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
+    }
 
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: 'Invalid email or password' });
+            return res.status(404).json({ error: 'User not found' });
         }
 
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid email or password' });
+        // Check password
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
-        console.log(token);
+        // Generate JWT
+        const token = jwt.sign({ email: user.email, id: user._id }, JWT_SECRET, { expiresIn: '1h' });
+
         res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
         console.error('Error logging in user:', error);
-        res.status(500).json({ message: 'Failed to log in user' });
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Verify a token
+router.post('/verify', (req, res) => {
+    const { token } = req.body;
+
+    if (!token) {
+        return res.status(400).json({ error: 'Token is required' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        res.status(200).json({ valid: true, decoded });
+    } catch (error) {
+        res.status(401).json({ valid: false, error: 'Invalid token' });
     }
 });
 

@@ -1,31 +1,31 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
-const authRoutes = require('./routes/auth');
-const applicationRoutes = require('./routes/applications');
-
+// Initialize Express
 const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
 
-app.use((req, res, next) => {
-    console.log(`Incoming Request: ${req.method} ${req.url}`);
-    next();
-});
-
-// Connect to MongoDB
+// MongoDB Connection
 mongoose.connect('mongodb+srv://mmaswin22:bRTITTtZXOIH8Op4@cluster0.malig.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-}).then(() => console.log('Connected to MongoDB'));
+})
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((err) => console.error('Failed to connect to MongoDB:', err));
+
+// Import Routes
+const authRoutes = require('./routes/auth');
+const applicationRoutes = require('./routes/applications');
 
 // Routes
-app.use('/api/dashboard/auth', authRoutes);
-app.use('/api/dashboard/app', applicationRoutes);
+app.use('/api/auth', authRoutes); // Authentication routes
+app.use('/api/app', applicationRoutes); // Application-related routes
 
-// Start Server
-const PORT = 5001;
+// Server Start
+const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

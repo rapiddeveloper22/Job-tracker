@@ -13,10 +13,10 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchApplications = async () => {
             try {
-                const response = await fetch('http://localhost:5001/api/dashboard/app/getAll', {
+                const response = await fetch('http://localhost:3000/api/app/getAll', {
                     method: 'POST',
                     headers: {
-                        // Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ user_email: userEmail }),

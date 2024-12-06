@@ -1,19 +1,39 @@
 const express = require('express');
 const Application = require('../models/Application');
+const { authenticate } = require('../middleware/auth');
 const router = express.Router();
 
-// Get all applications for a user
-router.post('/getAll', async (req, res) => {
-    const { user_email } = req.body;
-    console.log("Received /getAll request with:", req.body);
+// Save application data (protected route)
+router.post('/apply', authenticate, async (req, res) => {
+    const { is_careers_page, company, role_name, application_submitted, current_date, user_email } = req.body;
+    // const user_email = req.user.email; // Get email from token
 
-    if (!user_email) {
-        return res.status(400).json({ error: 'User email is required' });
+    console.log("Received /apply request with:", req.body);
+
+    try {
+        const newApplication = new Application({
+            is_careers_page,
+            company,
+            role_name,
+            application_submitted,
+            current_date,
+            user_email,
+        });
+
+        const savedApplication = await newApplication.save();
+        res.status(201).json(savedApplication);
+    } catch (error) {
+        console.error('Error saving application:', error);
+        res.status(500).json({ error: 'Failed to save application' });
     }
+});
+
+// Fetch all applications (protected route)
+router.post('/getAll', authenticate, async (req, res) => {
+    const user_email = req.user.email; // Get email from token
 
     try {
         const applications = await Application.find({ user_email });
-        console.log("Fetched applications:", applications);
         res.json(applications);
     } catch (error) {
         console.error('Error fetching applications:', error);

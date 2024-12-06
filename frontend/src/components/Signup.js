@@ -10,7 +10,7 @@ const Signup = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:5001/api/dashboard/auth/signup', {
+            const response = await fetch('http://localhost:3000/api/auth/signup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
@@ -18,6 +18,7 @@ const Signup = () => {
 
             const data = await response.json();
             if (data.success) {
+                localStorage.setItem('authToken', data.token); // Save token on login
                 alert('Signup successful! Please log in.');
                 navigate('/login'); // Redirect to Login page
             } else {
