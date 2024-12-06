@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
+import PrivacyPolicy from './components/PrivacyPolicy';
 
 // Protected Route Component
 const ProtectedRoute = ({ element: Element, ...rest }) => {
@@ -17,6 +18,7 @@ const App = () => {
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
 
         {/* Protected Route */}
         <Route path="/dashboard" element={<ProtectedRoute element={Dashboard} />} />
