@@ -1,0 +1,36 @@
+{
+    "manifest_version": 3,
+    "name": "Automatic job tracker",
+    "version": "1.0",
+    "description": "Automatically tracks the job which the user applies.",
+    "icons": {
+        "128": "Extension.png"
+    },
+    "permissions": [
+        "scripting",
+        "tabs",
+        "activeTab",
+        "storage"
+    ],
+    "host_permissions": [
+        "<all_urls>",
+        "chrome-extension://*/*"
+    ],
+    "background": {
+        "service_worker": "scripts/background.js"
+    },
+    "action": {
+        "default_title": "Extension icon",
+        "default_icon": "Extension.png"
+    },
+    "content_security_policy": {
+        "extension": {
+            "script-src": [
+                "'self'"
+            ],
+            "object-src": [
+                "'self'"
+            ]
+        }
+    }
+}
