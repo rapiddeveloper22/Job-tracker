@@ -1,36 +1,78 @@
-// Continuous Monitoring and Processing Function
-function continuousMonitorDomChanges(processChangeCallback) {
-    const targetNode = document.body; // Monitor the entire body
-    const observerConfig = {
-        childList: true,        // Detect additions/removals of nodes
-        subtree: true,          // Monitor changes within descendants
-        characterData: true,    // Detect text content changes
-    };
+// Helper function to wait for an element to fully load
+function waitForCompleteContent(selector, timeout = 5000, interval = 100) {
+    return new Promise((resolve, reject) => {
+        const startTime = Date.now();
+        const element = document.querySelector(selector);
 
-    const observer = new MutationObserver((mutationsList) => {
-        for (const mutation of mutationsList) {
-            console.log("Detected a DOM change:", mutation);
-            if (processChangeCallback) {
-                processChangeCallback(); // Trigger the callback to scrape and process
+        if (!element) {
+            return reject(new Error(`Element with selector "${selector}" not found.`));
+        }
+
+        let observer;
+
+        const stopObserving = () => {
+            if (observer) {
+                observer.disconnect();
             }
+        };
+
+        const checkContent = () => {
+            if (element.innerText.trim().length > 0) {
+                const currentText = element.innerText;
+                stopObserving();
+                resolve(currentText);
+            }
+        };
+
+        observer = new MutationObserver(() => {
+            checkContent();
+        });
+
+        // Observe the element for changes
+        observer.observe(element, { childList: true, subtree: true, characterData: true });
+
+        // Fallback to timeout if content doesn't load fully
+        setTimeout(() => {
+            stopObserving();
+            if (element.innerText.trim().length > 0) {
+                resolve(element.innerText);
+            } else {
+                reject(new Error("Element content did not fully load within the timeout period."));
+            }
+        }, timeout);
+
+        checkContent(); // Initial check
+    });
+}
+
+// Function to detect relevant form fields
+function detectFormFields() {
+    const formFields = [];
+
+    // Get all input, select, and textarea elements that are visible
+    const elements = [...document.querySelectorAll('input, select, textarea, button')];
+
+    elements.forEach((element) => {
+        // Check if element is visible and not hidden
+        if (element.offsetParent !== null) {
+            const field = {
+                type: element.tagName.toLowerCase(),
+                name: element.name || element.id || element.placeholder || "Unnamed Field",
+                value: element.value || "",
+                id: element.id,
+                class: element.className,
+                placeholder: element.placeholder || "",
+            };
+
+            formFields.push(field);
         }
     });
 
-    // Start observing the target node for configured changes
-    observer.observe(targetNode, observerConfig);
-    console.log("Started continuous monitoring of DOM changes...");
-
-    // Return a function to stop monitoring when needed
-    return () => {
-        observer.disconnect();
-        console.log("Stopped continuous monitoring of DOM changes.");
-    };
+    return formFields;
 }
 
-// Helper function to scrape and process data
+// Function to scrape and process data dynamically
 async function scrapeAndProcess() {
-    console.log("Scraping and processing data after DOM change...");
-
     let bodyText = "";
     const GEMINI_API_KEY = "AIzaSyCRTW69xL9c7Ht8Wo7MwN5Fk6UupDQalEU";
 
@@ -44,7 +86,7 @@ async function scrapeAndProcess() {
             bodyText = document.body.innerText;
         }
 
-        console.log(bodyText);
+        console.log("Scraped content:", bodyText);
 
         // Checking whether the user has applied for the job
         async function queryGemini(prompt) {
@@ -90,7 +132,7 @@ async function scrapeAndProcess() {
             }
         }
 
-        const prompt = `So basically the paragraph below is a scraped content of a webpage. Analyse the contents of the webpage and check whether the page is a careers page of a company or a normal website. If it is not a careers webpage then return NA as result if it is a careers webpage then do the following. You need to find 3 things here. 1. What is the company which the user is applying for?  2. Does this paragraph contain anything about the role name which the user is applying. If role name is present then reply the role name or else with 'No'  3. Does this paragraph contain anything that the user has submitted an application? Reply with 'Yes' or 'No'. Return them in JSON format with keys is_careers_page, company, role_name, application_submitted. Text: ${bodyText}. Give it in JSON format`;
+        const prompt = `So basically the paragraph below is a scraped content of a webpage. Analyse the contents of the webpage and check whether the page is a careers page of a company or a normal website. If it is not a careers webpage then return NA as result if it is a careers webpage then do the following. You need to find 3 things here. 1. What is the company which the user is applying for?  2. Does this paragraph contain anything about the role name which the user is applying. If role name is present then reply the role name or else with 'No'  3. Does this paragraph contain anything that the user has submitted an application? Reply with 'Yes' or 'No'. Return them in JSON format with keys is_careers_page, company, role_name, application_submitted. Text: ${bodyText}. Give it in JSON format with all the keys as string`;
 
         const applicationCheck = await queryGemini(prompt);
         console.log(applicationCheck);
@@ -103,7 +145,9 @@ async function scrapeAndProcess() {
 
         console.log("Processed result:", result);
 
-        if (result.is_careers_page && ((result.is_careers_page).toLowerCase() === "true" || (result.is_careers_page).toLowerCase() === "yes")) {
+        var isRoleNamePresent = result.role_name && (result.role_name.toLowerCase() != "no" && result.role_name.toLowerCase() != "na");
+
+        if (result.is_careers_page && ((result.is_careers_page).toLowerCase() === "true" || (result.is_careers_page).toLowerCase() === "yes") && isRoleNamePresent) {
             console.log("Careers page detected. Proceeding with further processing...");
 
             // Detect form fields on the page
@@ -121,7 +165,6 @@ async function scrapeAndProcess() {
             // Combine both the job details and form field relevance into one result object
             result.form_fields_relevance = relevanceResult;
 
-            // Send data to your backend
             chrome.runtime.sendMessage({ action: "checkLoginStatus" }, (response) => {
                 if (response && response.authToken) {
                     fetch("https://job-tracker-production-e381.up.railway.app/api/app/apply", {
@@ -145,18 +188,24 @@ async function scrapeAndProcess() {
     }
 }
 
-// Send message to background script to check login status
-chrome.runtime.sendMessage({ action: "checkLoginStatus" }, (response) => {
-    console.log("Response : " + response.authToken + " " + response.userEmail);
+// Continuous Monitoring and Processing
+function continuousMonitorDomChanges() {
+    scrapeAndProcess();
+    const observer = new MutationObserver(() => {
+        console.log("Detected DOM change. Triggering scrape-and-process...");
+        scrapeAndProcess();
+    });
 
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+
+    console.log("Started monitoring for DOM changes...");
+}
+
+// Start monitoring when the user is logged in
+chrome.runtime.sendMessage({ action: "checkLoginStatus" }, (response) => {
     if (response && response.authToken) {
         console.log("User is logged in. Starting DOM monitoring...");
-
-        // Start continuous monitoring with scrape-and-process logic
-        continuousMonitorDomChanges(() => {
-            console.log("Triggering scrape-and-process after DOM change...");
-            scrapeAndProcess();
-        });
+        continuousMonitorDomChanges();
     } else {
         console.log("User is not logged in");
     }
