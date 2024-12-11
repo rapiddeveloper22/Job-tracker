@@ -4,6 +4,7 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
 import PrivacyPolicy from './components/PrivacyPolicy';
+import LandingPage from './components/LandingPage';
 import './styles.css';
 
 // Protected Route Component
@@ -25,7 +26,8 @@ const App = () => {
         <Route path="/dashboard" element={<ProtectedRoute element={Dashboard} />} />
 
         {/* Redirect unknown paths to login */}
-        <Route path="*" element={<Navigate to="/login" />} />
+        {/* <Route path="*" element={<Navigate to="/login" />} /> */}
+        <Route path="*" element={<LandingPage />} />
       </Routes>
     </Router>
   );

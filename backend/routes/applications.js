@@ -8,23 +8,27 @@ router.post('/apply', authenticate, async (req, res) => {
     const { is_careers_page, company, role_name, application_submitted, current_date, user_email } = req.body;
     // const user_email = req.user.email; // Get email from token
 
-    console.log("Received /apply request with:", req.body);
+    // Remove the if condition once the latest chrome extension gets approved
+    if (is_careers_page != "NA") {
 
-    try {
-        const newApplication = new Application({
-            is_careers_page,
-            company,
-            role_name,
-            application_submitted,
-            current_date,
-            user_email,
-        });
+        console.log("Received /apply request with:", req.body);
 
-        const savedApplication = await newApplication.save();
-        res.status(201).json(savedApplication);
-    } catch (error) {
-        console.error('Error saving application:', error);
-        res.status(500).json({ error: 'Failed to save application' });
+        try {
+            const newApplication = new Application({
+                is_careers_page,
+                company,
+                role_name,
+                application_submitted,
+                current_date,
+                user_email,
+            });
+
+            const savedApplication = await newApplication.save();
+            res.status(201).json(savedApplication);
+        } catch (error) {
+            console.error('Error saving application:', error);
+            res.status(500).json({ error: 'Failed to save application' });
+        }
     }
 });
 

@@ -11,3 +11,64 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+/* Ensure Tailwind CSS is imported */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS for additional animations and effects */
+.animate-gradient-xy {
+  background-size: 200% 200%;
+  animation: gradient-xy 15s ease infinite;
+}
+
+@keyframes gradient-xy {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* For Lottie container to ensure responsiveness */
+.lottie-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  height: auto;
+  overflow: hidden;
+}
+
+/* Adding smooth transitions for hover effects */
+.transition-transform {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover\:scale-105:hover {
+  transform: scale(1.05);
+}
+
+/* Subtle shadows for a futuristic look */
+.shadow-lg {
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.25);
+}
+
+.hover\:shadow-xl:hover {
+  box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Glassmorphism effect for cards */
+.backdrop-filter {
+  backdrop-filter: blur(10px);
+}
+
+.bg-opacity-10 {
+  background-color: rgba(255, 255, 255, 0.1);
+}
