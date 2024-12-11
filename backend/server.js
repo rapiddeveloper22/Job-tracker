@@ -3,12 +3,11 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
-// Initialize Express
 const app = express();
 
 // Middleware
 app.use(cors({
-    origin: '*', // Allow all origins, or specify allowed origins
+    origin: '*', 
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
