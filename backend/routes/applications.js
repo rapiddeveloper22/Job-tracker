@@ -9,7 +9,7 @@ router.post('/apply', authenticate, async (req, res) => {
     // const user_email = req.user.email; // Get email from token
 
     // Remove the if condition once the latest chrome extension gets approved
-    var isRoleNamePresent = role_name.toLowerCase() != "no" || role_name.toLowerCase() != "na";
+    var isRoleNamePresent = (role_name.toLowerCase() != "no" && role_name.toLowerCase() != "na");
     if (is_careers_page != "na" && isRoleNamePresent) {
 
         console.log("Received /apply request with:", req.body);
