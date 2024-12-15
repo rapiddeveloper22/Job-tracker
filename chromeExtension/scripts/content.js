@@ -1,7 +1,10 @@
-// Helper function to wait for an element to fully load
-function waitForCompleteContent(selector, timeout = 5000, interval = 100) {
+var debounceTimer = null;
+var lastScrapedData = "";
+const GEMINI_API_KEY = "AIzaSyCRTW69xL9c7Ht8Wo7MwN5Fk6UupDQalEU";
+
+// Wait for changes with debounce
+function waitForContentChangeWithDebounce(selector, timeout = 3000) {
     return new Promise((resolve, reject) => {
-        const startTime = Date.now();
         const element = document.querySelector(selector);
 
         if (!element) {
@@ -17,10 +20,13 @@ function waitForCompleteContent(selector, timeout = 5000, interval = 100) {
         };
 
         const checkContent = () => {
-            if (element.innerText.trim().length > 0) {
-                const currentText = element.innerText;
-                stopObserving();
-                resolve(currentText);
+            const currentText = element.innerText.trim();
+            if (currentText !== lastScrapedData && currentText.length > 0) {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    lastScrapedData = currentText;
+                    resolve(currentText);
+                }, timeout);
             }
         };
 
@@ -31,14 +37,10 @@ function waitForCompleteContent(selector, timeout = 5000, interval = 100) {
         // Observe the element for changes
         observer.observe(element, { childList: true, subtree: true, characterData: true });
 
-        // Fallback to timeout if content doesn't load fully
+        // Fallback for timeout if no changes happen within the timeout period
         setTimeout(() => {
             stopObserving();
-            if (element.innerText.trim().length > 0) {
-                resolve(element.innerText);
-            } else {
-                reject(new Error("Element content did not fully load within the timeout period."));
-            }
+            resolve(element.innerText); // Return current content after timeout
         }, timeout);
 
         checkContent(); // Initial check
@@ -71,77 +73,92 @@ function detectFormFields() {
     return formFields;
 }
 
-// Function to scrape and process data dynamically
+// Function to wait until the page is fully loaded
+function waitForPageLoad() {
+    return new Promise((resolve) => {
+        if (document.readyState === "complete") {
+            resolve();
+        } else {
+            window.addEventListener("load", resolve);
+        }
+    });
+}
+
+// Function to clean up and extract JSON from wrapped string
+function extractJSON(rawResponse) {
+    try {
+        const cleanedString = rawResponse.replace(/```[a-z]*\n|```/g, "").trim();
+        return JSON.parse(cleanedString);
+    } catch (error) {
+        console.error("Failed to parse JSON:", error);
+        return null;
+    }
+}
+
+// Checking whether the user has applied for the job
+async function queryGemini(prompt) {
+    try {
+        const url =
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        const data = JSON.stringify({
+            contents: [
+                {
+                    parts: [{ text: prompt }],
+                },
+            ],
+        });
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: data,
+        });
+
+        if (!response.ok) {
+            throw new Error(`Gemini API request failed: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        return result.candidates[0].content.parts[0].text;
+    } catch (error) {
+        console.error("Error querying Gemini API:", error);
+        return "Error querying API";
+    }
+}
+
+// Scrape and process logic
 async function scrapeAndProcess() {
     let bodyText = "";
-    const GEMINI_API_KEY = "AIzaSyCRTW69xL9c7Ht8Wo7MwN5Fk6UupDQalEU";
 
     try {
         if (window.location.href.includes("linkedin")) {
             console.log("On a LinkedIn page. Checking for job details...");
-            bodyText = await waitForCompleteContent("div.jobs-search__job-details--wrapper");
+            bodyText = await waitForContentChangeWithDebounce("div.jobs-search__job-details--wrapper");
         } else {
-            // Fallback logic for non-LinkedIn pages
             console.log("Not a LinkedIn page, extracting body text.");
-            bodyText = document.body.innerText;
+            bodyText = await waitForContentChangeWithDebounce("body");
         }
 
         console.log("Scraped content:", bodyText);
 
-        // Checking whether the user has applied for the job
-        async function queryGemini(prompt) {
-            try {
-                const url =
-                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-                const data = JSON.stringify({
-                    contents: [
-                        {
-                            parts: [{ text: prompt }],
-                        },
-                    ],
-                });
-
-                const response = await fetch(url, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: data,
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Gemini API request failed: ${response.statusText}`);
-                }
-
-                const result = await response.json();
-                return result.candidates[0].content.parts[0].text;
-            } catch (error) {
-                console.error("Error querying Gemini API:", error);
-                return "Error querying API";
-            }
-        }
-
-        // Function to clean up and extract JSON from wrapped string
-        function extractJSON(rawResponse) {
-            try {
-                const cleanedString = rawResponse.replace(/```[a-z]*\n|```/g, "").trim();
-                return JSON.parse(cleanedString);
-            } catch (error) {
-                console.error("Failed to parse JSON:", error);
-                return null;
-            }
-        }
-
-        const prompt = `So basically the paragraph below is a scraped content of a webpage. Analyse the contents of the webpage and check whether the page is a careers page of a company or a normal website. If it is not a careers webpage then return NA as result if it is a careers webpage then do the following. You need to find 3 things here. 1. What is the company which the user is applying for?  2. Does this paragraph contain anything about the role name which the user is applying. If role name is present then reply the role name or else with 'No'  3. Does this paragraph contain anything that the user has submitted an application? Reply with 'Yes' or 'No'. Return them in JSON format with keys is_careers_page, company, role_name, application_submitted. Text: ${bodyText}. Give it in JSON format with all the keys as string`;
+        const prompt = `So basically the paragraph below is a scraped content of a webpage. Analyse the contents of the webpage and check whether the page is a careers page of a company or a normal website. If more than 2 job descriptions are present then return NA. If it is not a careers webpage then return NA as result if it is a careers webpage then do the following. You need to find 3 things here. 1. What is the company which the user is applying for?  2. Does this paragraph contain anything about the role name which the user is applying. If role name is present then reply the role name or else with 'No'  3. Does this paragraph contain anything that the user has submitted an application? Reply with 'Yes' or 'No'. Return them in JSON format with keys is_careers_page, company, role_name, application_submitted. Text: ${bodyText}. Give it in JSON format with all the keys as string`;
 
         const applicationCheck = await queryGemini(prompt);
         console.log(applicationCheck);
+
+        // Further processing
         const result = extractJSON(applicationCheck);
 
         if (!result) {
             console.error("Failed to process Gemini response");
             return;
         }
+
+        const currentDate = new Date();
+        const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getFullYear()}`;
+        result.current_date = formattedDate;
 
         console.log("Processed result:", result);
 
@@ -163,10 +180,15 @@ async function scrapeAndProcess() {
             console.log("Relevance Check Result:", relevanceResult);
 
             // Combine both the job details and form field relevance into one result object
-            result.form_fields_relevance = relevanceResult;
+            // result.form_fields_relevance = relevanceResult;
 
             chrome.runtime.sendMessage({ action: "checkLoginStatus" }, (response) => {
                 if (response && response.authToken) {
+                    result.user_email = response.userEmail;
+
+                    console.log("Before API call");
+                    console.log(result);
+
                     fetch("https://job-tracker-production-e381.up.railway.app/api/app/apply", {
                         method: "POST",
                         body: JSON.stringify(result),
@@ -188,25 +210,38 @@ async function scrapeAndProcess() {
     }
 }
 
-// Continuous Monitoring and Processing
-function continuousMonitorDomChanges() {
-    scrapeAndProcess();
-    const observer = new MutationObserver(() => {
-        console.log("Detected DOM change. Triggering scrape-and-process...");
-        scrapeAndProcess();
-    });
+// Main logic to wait for page load and start monitoring
+async function startMonitoring() {
+    try {
+        await waitForPageLoad();
+        console.log("Page fully loaded.");
 
-    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
-
-    console.log("Started monitoring for DOM changes...");
+        // Add a slight delay to allow dynamic content to stabilize
+        setTimeout(() => {
+            console.log("Starting content monitoring...");
+            scrapeAndProcess();
+        }, 2000);
+    } catch (error) {
+        console.error("Error during page load monitoring:", error);
+    }
 }
 
-// Start monitoring when the user is logged in
+// Start the monitoring process when the user is logged in
 chrome.runtime.sendMessage({ action: "checkLoginStatus" }, (response) => {
     if (response && response.authToken) {
-        console.log("User is logged in. Starting DOM monitoring...");
-        continuousMonitorDomChanges();
+        console.log("User is logged in. Initiating monitoring process...");
+        startMonitoring();
     } else {
-        console.log("User is not logged in");
+        console.log("User is not logged in. Skipping monitoring.");
     }
 });
+
+
+
+
+
+
+
+
+
+

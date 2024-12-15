@@ -1,74 +1,289 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
-
 /* Ensure Tailwind CSS is imported */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Custom CSS for additional animations and effects */
-.animate-gradient-xy {
-  background-size: 200% 200%;
-  animation: gradient-xy 15s ease infinite;
+/* Global Settings */
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #0a0a0a;
+  color: white;
+  /* Ensure text is white by default */
 }
 
-@keyframes gradient-xy {
-
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
+/* Header */
+header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+  padding: 20px;
+  /* background-color: rgba(0, 0, 0, 0.7); */
+  /* Solid background for header */
 }
 
-/* For Lottie container to ensure responsiveness */
-.lottie-container {
+header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+header nav ul {
+  display: flex;
+  gap: 2rem;
+}
+
+header nav a {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+header nav a:hover {
+  color: #9333ea;
+}
+
+header a {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: transparent;
+  background: linear-gradient(45deg, #ff0088, #ff8800);
+  background-clip: text;
+  transition: all 0.3s ease;
+}
+
+/* Hero Section */
+.hero-section {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  max-width: 100%;
-  height: auto;
-  overflow: hidden;
+  height: 100vh;
+  background-color: #111;
+  opacity: 1;
+  /* Ensure full opacity */
 }
 
-/* Adding smooth transitions for hover effects */
-.transition-transform {
+.hero-content h1 {
+  font-size: 4rem;
+  background: linear-gradient(45deg, #ff0088, #ff8800);
+  background-clip: text;
+  color: transparent;
+  text-align: center;
+  margin-bottom: 20px;
+  animation: fadeIn 2s ease-in-out;
+}
+
+.hero-content p {
+  font-size: 1.25rem;
+  color: #ccc;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.cta-button {
+  padding: 15px 35px;
+  background: linear-gradient(45deg, #ff0088, #ff8800);
+  color: white;
+  font-size: 1.2rem;
+  border-radius: 25px;
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.cta-button:hover {
+  background: linear-gradient(45deg, #ff8800, #ff0088);
+  transform: scale(1.1);
+}
+
+/* 3D Floating Object Animation */
+.floating-object svg {
+  animation: rotate 6s linear infinite;
+}
+
+/* Rotation Animation */
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Features & Testimonials Section */
+.features-section,
+.testimonials-section,
+.future-features-section {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 0;
+  background-color: #111;
+  /* Black background like Hero section */
+  opacity: 1;
+  color: #f3f4f6;
+  /* Light text color */
+  min-height: 100vh;
+}
+
+/* Heading inside Features and Testimonials Section */
+.features-section h2,
+.testimonials-section h2,
+.future-features-section h2 {
+  font-size: 3rem;
+  /* Adjusted font size for headings */
+  background: linear-gradient(45deg, #ff0088, #ff8800);
+  /* Gradient text like Hero section */
+  background-clip: text;
+  color: transparent;
+  text-align: center;
+  margin-bottom: 40px;
+  animation: fadeIn 2s ease-in-out;
+  /* Smooth fade-in animation */
+}
+
+/* Feature Card Styling */
+.feature-card,
+.testimonial-card,
+.future-feature-card {
+  background: #1f1f1f;
+  /* Dark background for cards */
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: 1;
+  color: #ccc;
+  /* Light text inside cards */
+  text-align: center;
 }
 
-.hover\:scale-105:hover {
+/* Card Hover Effects */
+.feature-card:hover,
+.testimonial-card:hover,
+.future-feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  background: #333;
+  /* Slightly lighter card background on hover */
+}
+
+/* Feature Card Title */
+.feature-card h3,
+.testimonial-card h3,
+.future-feature-card h3 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ff0088;
+  /* Gradient-style color */
+  margin-bottom: 15px;
+  background: linear-gradient(45deg, #ff0088, #ff8800);
+  background-clip: text;
+  color: transparent;
+}
+
+/* Feature Card Paragraphs */
+.feature-card p,
+.testimonial-card p,
+.future-feature-card p {
+  font-size: 1rem;
+  color: #ccc;
+  /* Light color for text */
+  margin-bottom: 20px;
+}
+
+/* Footer */
+footer {
+  /* background-color: #111; */
+  /* Black background for the footer */
+  padding: 20px 0;
+  /* color: #888; */
+  /* Subtle text color */
+  text-align: center;
+}
+
+footer a {
+  color: #f3f4f6;
+  /* White text for footer links */
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+footer a:hover {
+  color: #ff0088;
+  /* Hover color like in the hero section */
+}
+
+
+
+
+
+
+/* Animations */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 1s ease-out;
+}
+
+/* Background Overlay for Sections */
+.features-section .relative::before,
+.testimonials-section .relative::before,
+.future-features-section .relative::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)); */
+  z-index: -1;
+  /* Keeps it behind the content */
+}
+
+/* Hover Effects */
+.feature-card:hover,
+.testimonial-card:hover,
+.future-feature-card:hover {
   transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
 }
 
-/* Subtle shadows for a futuristic look */
-.shadow-lg {
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.25);
+.future-feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  background: #333;
 }
 
-.hover\:shadow-xl:hover {
-  box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.3);
+
+/* Typography Enhancements */
+.feature-card h3,
+.testimonial-card h4,
+.future-feature-card h3 {
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+  /* Text shadow effect */
 }
 
-/* Glassmorphism effect for cards */
-.backdrop-filter {
-  backdrop-filter: blur(10px);
-}
-
-.bg-opacity-10 {
-  background-color: rgba(255, 255, 255, 0.1);
-}
+/* Gradients */
+/* .bg-gradient-to-r {
+  background: linear-gradient(to right, #ff0088, #ff8800);
+} */

@@ -9,11 +9,12 @@ chrome.action.onClicked.addListener(() => {
     checkLoginStatusForLogout();
 });
 
-// Listen for when a new tab is activated or updated
+// Listen for when a new tab is activated
 chrome.tabs.onActivated.addListener((activeInfo) => {
     chrome.tabs.get(activeInfo.tabId, (tab) => {
         if (tab.url && !tab.url.startsWith("chrome://")) {
-            console.log("Tab activated:", tab.url); // Debug log
+            console.log("Tab activated:", tab.url);
+            injectContentScriptIfNeeded(activeInfo.tabId);
             checkLoginStatusForLogin();
         } else {
             console.log("Tab activated is a Chrome system page, ignoring.");
@@ -21,12 +22,25 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
     });
 });
 
-
+// Listen for when a tab is updated (e.g., page loaded)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (tab.active && changeInfo.status === "complete" && !tab.url.startsWith("chrome://")) {
-        injectContentScript(tabId); // Inject content script if needed
+    if (changeInfo.status === "complete" && tab.url && !tab.url.startsWith("chrome://")) {
+        console.log("Tab updated and loaded:", tab.url);
+        injectContentScriptIfNeeded(tabId); // Inject content script if needed
     }
 });
+
+// Function to inject the content script if not already injected
+function injectContentScriptIfNeeded(tabId) {
+    chrome.scripting.executeScript({
+        target: { tabId: tabId },
+        files: ["scripts/content.js"]
+    }).then(() => {
+        console.log("Content script injected successfully.");
+    }).catch((error) => {
+        console.error("Failed to inject content script:", error);
+    });
+}
 
 // Function to check if the user is logged in for login purposes
 function checkLoginStatusForLogin() {
@@ -44,7 +58,6 @@ function checkLoginStatusForLogin() {
         }
     });
 }
-
 
 // Function to check if the user is logged in for logout purposes
 function checkLoginStatusForLogout() {
@@ -81,29 +94,24 @@ function openLogoutPopup() {
     console.log("Logout popup opened.");
 }
 
-// Function to inject the content script
-function injectContentScript(tabId) {
-    chrome.scripting.executeScript({
-        target: { tabId: tabId },
-        files: ["scripts/content.js"]
-    });
-}
-
-
-
-
-
-
-
-
-
 // Listen for messages from content scripts
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "checkLoginStatus") {
-        // Respond with the login status (auth token or not)
-        chrome.storage.local.get('authToken', (result) => {
-            sendResponse({ authToken: result.authToken });
+        // Retrieve both `authToken` and `userEmail` from storage
+        chrome.storage.local.get(["authToken", "userEmail"], (result) => {
+            if (chrome.runtime.lastError) {
+                console.error("Error accessing storage:", chrome.runtime.lastError);
+                sendResponse({ error: chrome.runtime.lastError.message });
+                return;
+            }
+
+            // Send back both authToken and userEmail
+            sendResponse({
+                authToken: result.authToken || null,
+                userEmail: result.userEmail || null,
+            });
         });
-        return true; // To indicate that the response is asynchronous
+
+        return true; // Indicate that the response is asynchronous
     }
 });
