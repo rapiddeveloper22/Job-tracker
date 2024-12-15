@@ -188,7 +188,7 @@ const LandingPage = () => {
                             <p className="text-lg text-gray-200 italic mb-4">
                                 “This tool made my job hunt effortless and efficient.”
                             </p>
-                            <h4 className="text-teal-400 font-semibold">- Nandini Aswin</h4>
+                            <h4 className="text-teal-400 font-semibold">- Nandini</h4>
                         </div>
                         <div className="testimonial-card bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:scale-105">
                             <p className="text-lg text-gray-200 italic mb-4">
