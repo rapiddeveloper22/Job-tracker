@@ -1,7 +1,5 @@
 import React, { useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import Particles from "react-particles";
-import { loadFull } from "tsparticles";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 
