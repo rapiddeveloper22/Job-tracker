@@ -81,27 +81,16 @@ const LandingPage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-900 text-gray-100 font-sans">
-            {/* Particles Background */}
-            {/* <Particles
-                id="tsparticles"
-                init={particlesInit}
-                options={{
-                    fullScreen: false,
-                    particles: {
-                        number: { value: 80 },
-                        color: { value: "#ffffff" },
-                        shape: { type: "circle" },
-                        opacity: { value: 0.5, random: true },
-                        size: { value: 3, random: true },
-                        move: { enable: true, speed: 2 },
-                    },
-                }}
-                className="absolute inset-0 pointer-events-none"
-            /> */}
-
             {/* Header */}
-            <header className="fixed top-0 left-0 w-full py-6 px-10 flex justify-between items-center z-10  bg-opacity-70 text-white">
-                <h1 className="text-2xl font-bold text-pink-400 tracking-wide">Job Tracker</h1>
+            <header className="fixed top-0 left-0 w-full py-6 px-10 flex justify-between items-center z-10 bg-opacity-70 text-white">
+                {/* Logo Section */}
+                <div className="flex items-center flex-shrink-0">
+                    <img
+                        src={require('../assets/Logo.png')} // Update this path
+                        alt="Job Tracker Logo"
+                        className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-16 lg:w-20" // Adjust height/width as needed
+                    />
+                </div>
                 <nav className="space-x-6">
                     <Link to="/login" className="text-lg text-gray-100 hover:text-indigo-300">Login</Link>
                     <Link to="/signup" className="text-lg text-gray-100 hover:text-indigo-300">Signup</Link>
