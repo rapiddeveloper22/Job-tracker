@@ -50,12 +50,27 @@ const GmailPopup = ({ isConnected, onConnect }) => {
             );
 
             const messages = await Promise.all(messagePromises);
-            console.log(messages);
             const emailData = messages.map((message) => {
                 const headers = message.result.payload.headers;
                 const subject = headers.find((header) => header.name === 'Subject')?.value;
                 const from = headers.find((header) => header.name === 'From')?.value;
-                return { subject, from };
+
+                let body = '';
+
+                // Extract the body from the message payload
+                if (message.result.payload.parts) {
+                    const part = message.result.payload.parts.find(
+                        (part) => part.mimeType === 'text/plain' || part.mimeType === 'text/html'
+                    );
+
+                    if (part && part.body?.data) {
+                        body = atob(part.body.data.replace(/-/g, '+').replace(/_/g, '/'));
+                    }
+                } else if (message.result.payload.body?.data) {
+                    body = atob(message.result.payload.body.data.replace(/-/g, '+').replace(/_/g, '/'));
+                }
+
+                return { subject, from, body };
             });
 
             setEmails(emailData);
@@ -65,6 +80,7 @@ const GmailPopup = ({ isConnected, onConnect }) => {
             setLoading(false);
         }
     };
+
 
     return (
         <div className="gmail-popup">
@@ -83,16 +99,20 @@ const GmailPopup = ({ isConnected, onConnect }) => {
                     ) : emails.length > 0 ? (
                         <ul className="text-gray-100">
                             {emails.map((email, index) => (
-                                <li key={index} className="mb-2">
+                                <li key={index} className="mb-4 p-4 bg-gray-800 rounded-lg shadow-md">
                                     <p>
                                         <strong>From:</strong> {email.from}
                                     </p>
                                     <p>
                                         <strong>Subject:</strong> {email.subject}
                                     </p>
+                                    <p>
+                                        <strong>Body:</strong> {email.body || 'No body content available'}
+                                    </p>
                                 </li>
                             ))}
                         </ul>
+
                     ) : (
                         <p>No emails found.</p>
                     )}
