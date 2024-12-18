@@ -1,11 +1,11 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./components/Login";
-import Signup from "./components/Signup";
-import Dashboard from "./components/Dashboard";
-import PrivacyPolicy from "./components/PrivacyPolicy";
-import LandingPage from "./components/LandingPage";
-import HowToUse from "./components/HowToUse";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import LandingPage from "./pages/LandingPage";
+import HowToUse from "./pages/HowToUse";
 import "./index.css"; // TailwindCSS styles
 
 // Protected Route Component
