@@ -124,7 +124,7 @@ const GmailPopup = ({ isConnected, onConnect }) => {
                 result.user_email = localStorage.getItem("userEmail");
                 result.current_date = date;
                 result.is_careers_page = 'Yes';
-                console.log('Gemini Result for Email:', extractJSON(geminiResult));
+                console.log('Gemini Result for Email:', result);
 
 
                 fetch("https://job-tracker-production-e381.up.railway.app/api/app/apply", {
