@@ -32,3 +32,5 @@ app.use('/api/app', applicationRoutes); // Application-related routes
 // Server Start
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+

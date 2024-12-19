@@ -10,9 +10,20 @@ const GmailPopup = ({ isConnected, onConnect }) => {
     const [emails, setEmails] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    // Function to clean up and extract JSON from wrapped string
+    function extractJSON(rawResponse) {
+        try {
+            const cleanedString = rawResponse.replace(/```[a-z]*\n|```/g, "").trim();
+            return JSON.parse(cleanedString);
+        } catch (error) {
+            console.error("Failed to parse JSON:", error);
+            return null;
+        }
+    }
+
     async function queryGemini(email) {
         try {
-            const prompt = `You are an assistant that extracts job application details from email content. If the email is about a job application, return a JSON object with: - "company": the company name, - "role_name": the job role mentioned, - "application_submitted": true if it seems like an application was submitted. If its not about a job application, return NA for all fields. Text: ${email}`;
+            const prompt = `You are an assistant that extracts job application details from email content. Check if the email is about a job application, if yes then return a JSON object with: - "company": the company name, - "role_name": the job role mentioned, - "application_submitted": true if it seems like an application was submitted. If its not about a job application, return NA for all fields. Text: ${email}`;
             const url =
                 `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
             const data = JSON.stringify({
@@ -107,7 +118,7 @@ const GmailPopup = ({ isConnected, onConnect }) => {
 
                 // Call queryGemini for each email body
                 const geminiResult = await queryGemini(body);
-                console.log('Gemini Result for Email:', { subject, from, geminiResult });
+                console.log('Gemini Result for Email:', extractJSON(geminiResult));
 
                 return { subject, from, body, geminiResult };
             });
