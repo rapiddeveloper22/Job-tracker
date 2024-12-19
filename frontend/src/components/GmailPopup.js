@@ -23,7 +23,7 @@ const GmailPopup = ({ isConnected, onConnect }) => {
 
     async function queryGemini(email) {
         try {
-            const prompt = `You are an assistant that extracts job application details from email content. Check if the email is about a job application, if yes then return a JSON object with: - "company": the company name, - "role_name": the job role mentioned, - "application_submitted": true if it seems like an application was submitted. If its not about a job application, return NA for all fields. Text: ${email}`;
+            const prompt = `You are an assistant that extracts job application details from email content. Check if the email is about a job application, if yes then return a JSON object with: - "company": the company name, - "role_name": the job role mentioned, - "application_submitted": true if it seems like an application was submitted. If its not about a job application, return NA for all fields. Give all the key values as string. Text: ${email}`;
             const url =
                 `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
             const data = JSON.stringify({
