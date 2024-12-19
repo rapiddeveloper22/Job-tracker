@@ -100,6 +100,8 @@ const GmailPopup = ({ isConnected, onConnect }) => {
                 const headers = message.result.payload.headers;
                 const subject = headers.find((header) => header.name === 'Subject')?.value;
                 const from = headers.find((header) => header.name === 'From')?.value;
+                const dateHeader = headers.find((header) => header.name === 'Date')?.value;
+                const date = dateHeader ? new Date(dateHeader).toLocaleString() : 'Unknown Date';
 
                 let body = '';
 
@@ -118,7 +120,25 @@ const GmailPopup = ({ isConnected, onConnect }) => {
 
                 // Call queryGemini for each email body
                 const geminiResult = await queryGemini(body);
+                const result = extractJSON(geminiResult);
+                result.user_email = localStorage.getItem("userEmail");
+                result.current_date = date;
+                result.is_careers_page = 'Yes';
                 console.log('Gemini Result for Email:', extractJSON(geminiResult));
+
+
+                fetch("https://job-tracker-production-e381.up.railway.app/api/app/apply", {
+                    method: "POST",
+                    body: JSON.stringify(result),
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8",
+                        "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+                    }
+                })
+                    .then(response => response.json())
+                    .then(json => console.log(json))
+                    .catch(error => console.error("Error submitting application:", error));
+
 
                 return { subject, from, body, geminiResult };
             });
