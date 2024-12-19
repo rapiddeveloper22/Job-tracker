@@ -7,7 +7,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: '*', 
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -24,10 +24,12 @@ mongoose.connect('mongodb+srv://mmaswin22:bRTITTtZXOIH8Op4@cluster0.malig.mongod
 // Import Routes
 const authRoutes = require('./routes/auth');
 const applicationRoutes = require('./routes/applications');
+const gmailRoutes = require('./routes/gmail');
 
 // Routes
 app.use('/api/auth', authRoutes); // Authentication routes
 app.use('/api/app', applicationRoutes); // Application-related routes
+app.use('/api/gmail', gmailRoutes);
 
 // Server Start
 const PORT = 3000;

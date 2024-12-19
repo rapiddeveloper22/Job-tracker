@@ -4,10 +4,44 @@ import { gapi } from 'gapi-script';
 const CLIENT_ID = '505792993495-s0fuo4pilb8k9u2tj0u3ggv75os3vjl1.apps.googleusercontent.com';
 const API_KEY = 'AIzaSyDViSkkMRFM8SMDg-gA0_Aefjy6YfQkeF0';
 const SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
+const GEMINI_API_KEY = 'AIzaSyCRTW69xL9c7Ht8Wo7MwN5Fk6UupDQalEU';
 
 const GmailPopup = ({ isConnected, onConnect }) => {
     const [emails, setEmails] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    async function queryGemini(email) {
+        try {
+            const prompt = `You are an assistant that extracts job application details from email content. If the email is about a job application, return a JSON object with: - "company": the company name, - "role_name": the job role mentioned, - "application_submitted": true if it seems like an application was submitted. If its not about a job application, return NA for all fields. Text: ${email}`;
+            const url =
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            const data = JSON.stringify({
+                contents: [
+                    {
+                        parts: [{ text: prompt }],
+                    },
+                ],
+            });
+
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: data,
+            });
+
+            if (!response.ok) {
+                throw new Error(`Gemini API request failed: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            return result.candidates[0].content.parts[0].text;
+        } catch (error) {
+            console.error("Error querying Gemini API:", error);
+            return "Error querying API";
+        }
+    }
 
     const handleConnectGmail = () => {
         gapi.load('client:auth2', async () => {
@@ -50,7 +84,8 @@ const GmailPopup = ({ isConnected, onConnect }) => {
             );
 
             const messages = await Promise.all(messagePromises);
-            const emailData = messages.map((message) => {
+
+            const emailDataPromises = messages.map(async (message) => {
                 const headers = message.result.payload.headers;
                 const subject = headers.find((header) => header.name === 'Subject')?.value;
                 const from = headers.find((header) => header.name === 'From')?.value;
@@ -70,9 +105,14 @@ const GmailPopup = ({ isConnected, onConnect }) => {
                     body = atob(message.result.payload.body.data.replace(/-/g, '+').replace(/_/g, '/'));
                 }
 
-                return { subject, from, body };
+                // Call queryGemini for each email body
+                const geminiResult = await queryGemini(body);
+                console.log('Gemini Result for Email:', { subject, from, geminiResult });
+
+                return { subject, from, body, geminiResult };
             });
 
+            const emailData = await Promise.all(emailDataPromises);
             setEmails(emailData);
         } catch (err) {
             console.error('Error fetching emails:', err);
@@ -80,6 +120,7 @@ const GmailPopup = ({ isConnected, onConnect }) => {
             setLoading(false);
         }
     };
+
 
 
     return (
