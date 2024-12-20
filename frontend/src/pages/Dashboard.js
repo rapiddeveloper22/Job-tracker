@@ -147,7 +147,7 @@ const Dashboard = () => {
                 />
 
                 <div>
-                    {!isGmailConnected ? (
+                    {localStorage.getItem('isGmailConnected') != null ? (
                         <GmailPopup
                             isConnected={isGmailConnected}
                             onConnect={() => setIsGmailConnected(true)}
@@ -156,10 +156,6 @@ const Dashboard = () => {
                         <div></div>
                     )}
                 </div>
-                {/* <GmailPopup
-                    isConnected={isGmailConnected}
-                    onConnect={() => setIsGmailConnected(true)}
-                /> */}
 
             </div>
         </div>
