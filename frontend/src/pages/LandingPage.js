@@ -2,6 +2,7 @@ import React, { useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
+import Footer from '../components/Footer';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -208,14 +209,8 @@ const LandingPage = () => {
 
 
 
-            {/* Footer */}
-            <footer className="py-6 text-center text-gray-400 bg-gradient-to-r from-gray-800 via-black to-indigo-900 opacity-80">
-                <p>&copy; 2024 Job Tracker. All rights reserved.</p>
-                <div className="flex justify-center space-x-4 mt-2">
-                    <Link to="/privacyPolicy" className="hover:text-gray-100">Privacy Policy</Link>
-                    <Link to="/support" className="hover:text-gray-100">Support</Link>
-                </div>
-            </footer>
+            {/* Footer Component */}
+            <Footer />
         </div>
     );
 };
