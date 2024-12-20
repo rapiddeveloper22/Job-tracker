@@ -85,11 +85,11 @@ const LandingPage = () => {
             <header className="fixed top-0 left-0 w-full py-6 px-10 flex justify-between items-center z-10 bg-opacity-70 text-white">
                 {/* Logo Section */}
                 <div className="flex items-center flex-shrink-0">
-                    <img
-                        src={require('../assets/Logo.png')}
-                        alt="Job Tracker Logo"
-                        className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-16 lg:w-20" // Adjust height/width as needed
-                    />
+                    <Link to="/">
+                        <h1 className="text-3xl font-bold" style={{ fontFamily: 'Koulen', color: '#f6f6f6' }}>
+                            Jobossy
+                        </h1>
+                    </Link>
                 </div>
                 <nav className="space-x-6">
                     <Link to="/login" className="text-lg text-gray-100 hover:text-indigo-300">Login</Link>
