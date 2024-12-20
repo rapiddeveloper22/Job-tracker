@@ -7,6 +7,7 @@ import ApplicationTable from '../components/ApplicationTable';
 import GmailPopup from '../components/GmailPopup';
 import { FiDownload } from 'react-icons/fi';
 import * as XLSX from 'xlsx';
+import Footer from '../components/Footer';  // Import Footer component here
 
 const Dashboard = () => {
     const userEmail = localStorage.getItem('userEmail');
@@ -143,9 +144,9 @@ const Dashboard = () => {
     const currentApps = filteredApplications.slice(indexOfFirstApp, indexOfLastApp);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-black to-indigo-800 text-gray-100 font-sans py-8 px-6 pt-16">
+        <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-black to-indigo-800 text-gray-100 font-sans pt-16 flex flex-col">
             <NavigationBar />
-            <div className="max-w-7xl mx-auto bg-gray-800 p-8 mt-8 rounded-3xl shadow-xl">
+            <div className="flex-1 max-w-full mx-auto bg-gray-800 p-8 mt-8 rounded-3xl shadow-xl overflow-hidden">
                 <div className="flex justify-between items-center mb-8">
                     <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#ff0088] to-[#ff8800]">
                         Your Applications
@@ -184,6 +185,9 @@ const Dashboard = () => {
                     )}
                 </div>
             </div>
+
+            {/* Footer */}
+            <Footer />
         </div>
     );
 };

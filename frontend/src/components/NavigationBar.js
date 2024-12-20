@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { HiLogout } from 'react-icons/hi'; // Adding logout icon
 
 const NavigationBar = () => {
     return (
@@ -37,8 +38,9 @@ const NavigationBar = () => {
                 {/* Logout Button */}
                 <Link
                     to="/login"
-                    className="py-2 px-6 rounded-full bg-gradient-to-r from-[#ff0088] to-[#ff8800] text-white font-medium hover:opacity-90 transition duration-300 shadow-md"
+                    className="flex items-center py-2 px-6 rounded-full bg-gradient-to-r from-[#ff0088] to-[#ff8800] text-white font-medium text-lg hover:opacity-90 transition duration-300 shadow-md"
                 >
+                    <HiLogout className="mr-2 text-xl" /> {/* Logout Icon */}
                     Logout
                 </Link>
             </div>

@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import LandingPage from "./pages/LandingPage";
 import HowToUse from "./pages/HowToUse";
+import FeedbackForm from "./pages/FeedbackForm";
 import "./index.css"; // TailwindCSS styles
 
 // Protected Route Component
@@ -24,6 +25,7 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/how-to-use" element={<HowToUse />} />
         <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
+        <Route path="/feedbackForm" element={<FeedbackForm />} />
 
         {/* Protected Route */}
         <Route path="/dashboard" element={<ProtectedRoute element={Dashboard} />} />

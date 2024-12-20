@@ -10,6 +10,7 @@ body {
   padding: 0;
   background-color: #0a0a0a;
   color: white;
+  box-sizing: border-box;
   /* Ensure text is white by default */
 }
 
