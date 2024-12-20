@@ -146,10 +146,20 @@ const Dashboard = () => {
                     onPageLoad={loadMoreApplications}
                 />
 
-                <GmailPopup
+                <div>
+                    {!isGmailConnected ? (
+                        <GmailPopup
+                            isConnected={isGmailConnected}
+                            onConnect={() => setIsGmailConnected(true)}
+                        />
+                    ) : (
+                        <div></div>
+                    )}
+                </div>
+                {/* <GmailPopup
                     isConnected={isGmailConnected}
                     onConnect={() => setIsGmailConnected(true)}
-                />
+                /> */}
 
             </div>
         </div>
