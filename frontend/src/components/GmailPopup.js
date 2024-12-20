@@ -195,7 +195,7 @@ const GmailPopup = ({ isConnected, onConnect }) => {
                 </button>
             ) : (
                 <div>
-                    <h3 className="text-lg font-semibold mb-4">Recent Emails</h3>
+                    {/* <h3 className="text-lg font-semibold mb-4">Recent Emails</h3>
                     {loading ? (
                         <p>Loading emails...</p>
                     ) : emails.length > 0 ? (
@@ -216,7 +216,7 @@ const GmailPopup = ({ isConnected, onConnect }) => {
                         </ul>
                     ) : (
                         <p>No emails found.</p>
-                    )}
+                    )} */}
                 </div>
             )}
         </div>
