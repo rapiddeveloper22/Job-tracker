@@ -5,7 +5,8 @@ import NavigationBar from '../components/NavigationBar';
 import SearchBar from '../components/SearchBar';
 import ApplicationTable from '../components/ApplicationTable';
 import GmailPopup from '../components/GmailPopup';
-// import LogoutButton from '../components/LogoutButton';
+import { FiDownload } from 'react-icons/fi';
+import * as XLSX from 'xlsx';
 
 const Dashboard = () => {
     const userEmail = localStorage.getItem('userEmail');
@@ -60,11 +61,31 @@ const Dashboard = () => {
         navigate('/login');
     };
 
+    // Export to Excel Function
+    const exportToExcel = () => {
+        if (!applications || applications.length === 0) {
+            alert("No data available to export.");
+            return;
+        }
+
+        const worksheet = XLSX.utils.json_to_sheet(
+            applications.map((app) => ({
+                Company: app.company,
+                Role: app.role_name,
+                Date: app.current_date,
+            }))
+        );
+
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Applications");
+
+        XLSX.writeFile(workbook, "JobApplications.xlsx");
+    };
+
     const handleSearch = (e) => {
         const query = e.target.value;
         setSearchQuery(query);
 
-        // Function to validate and convert the date format (dd-mm-yyyy to yyyy-mm-dd)
         const convertToDate = (dateStr) => {
             const parts = dateStr.split('-');
             if (parts.length === 3) {
@@ -129,7 +150,13 @@ const Dashboard = () => {
                     <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#ff0088] to-[#ff8800]">
                         Your Applications
                     </h2>
-                    {/* <LogoutButton onLogout={handleLogout} /> */}
+                    <button
+                        onClick={exportToExcel}
+                        className="p-3 rounded-full bg-gray-700 hover:bg-[#ff0088] text-white shadow-md transition ease-in-out duration-300"
+                        title="Export to Excel"
+                    >
+                        <FiDownload className="text-xl" />
+                    </button>
                 </div>
 
                 <SearchBar
@@ -156,7 +183,6 @@ const Dashboard = () => {
                         <div></div>
                     )}
                 </div>
-
             </div>
         </div>
     );
