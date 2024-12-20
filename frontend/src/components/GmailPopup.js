@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { gapi } from 'gapi-script';
 
 const CLIENT_ID = '505792993495-s0fuo4pilb8k9u2tj0u3ggv75os3vjl1.apps.googleusercontent.com';
@@ -9,52 +9,18 @@ const GEMINI_API_KEY = 'AIzaSyCRTW69xL9c7Ht8Wo7MwN5Fk6UupDQalEU';
 const GmailPopup = ({ isConnected, onConnect }) => {
     const [emails, setEmails] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [gmailConnected, setGmailConnected] = useState(false);
 
-    // Function to clean up and extract JSON from wrapped string
-    function extractJSON(rawResponse) {
-        try {
-            const cleanedString = rawResponse.replace(/```[a-z]*\n|```/g, "").trim();
-            return JSON.parse(cleanedString);
-        } catch (error) {
-            console.error("Failed to parse JSON:", error);
-            return null;
+    useEffect(() => {
+        // Check localStorage for Gmail connection status on component mount
+        const isPreviouslyConnected = localStorage.getItem('gmailConnected') === 'true';
+        if (isPreviouslyConnected) {
+            initializeGmail();
         }
-    }
+    }, []);
 
-    async function queryGemini(email) {
-        try {
-            const prompt = `You are an assistant that extracts job application details from email content. Check if the email is about a job application, if yes then return a JSON object with: - "company": the company name, - "role_name": the job role mentioned, - "application_submitted": true as string if it seems like an application was submitted. If its not about a job application, return NA for all fields. Give all the values as string. Text: ${email}`;
-            const url =
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-            const data = JSON.stringify({
-                contents: [
-                    {
-                        parts: [{ text: prompt }],
-                    },
-                ],
-            });
-
-            const response = await fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: data,
-            });
-
-            if (!response.ok) {
-                throw new Error(`Gemini API request failed: ${response.statusText}`);
-            }
-
-            const result = await response.json();
-            return result.candidates[0].content.parts[0].text;
-        } catch (error) {
-            console.error("Error querying Gemini API:", error);
-            return "Error querying API";
-        }
-    }
-
-    const handleConnectGmail = () => {
+    // Initialize Gmail client
+    const initializeGmail = async () => {
         gapi.load('client:auth2', async () => {
             try {
                 await gapi.client.init({
@@ -67,16 +33,34 @@ const GmailPopup = ({ isConnected, onConnect }) => {
                 const authInstance = gapi.auth2.getAuthInstance();
                 const isSignedIn = authInstance.isSignedIn.get();
 
-                if (!isSignedIn) {
-                    await authInstance.signIn();
+                if (isSignedIn) {
+                    setGmailConnected(true);
+                    onConnect(); // Notify parent component
+                    fetchEmails(); // Fetch emails automatically
                 }
-
-                onConnect(); // Update parent state
-                fetchEmails(); // Fetch top 10 emails
             } catch (err) {
-                console.error('Error connecting to Gmail:', err);
+                console.error('Error initializing Gmail:', err);
             }
         });
+    };
+
+    // Handle Gmail connection
+    const handleConnectGmail = async () => {
+        try {
+            const authInstance = gapi.auth2.getAuthInstance();
+            const isSignedIn = authInstance.isSignedIn.get();
+
+            if (!isSignedIn) {
+                await authInstance.signIn();
+            }
+
+            setGmailConnected(true);
+            localStorage.setItem('gmailConnected', 'true'); // Save connection state
+            onConnect(); // Notify parent component
+            fetchEmails(); // Fetch emails
+        } catch (err) {
+            console.error('Error connecting to Gmail:', err);
+        }
     };
 
     const fetchEmails = async () => {
@@ -121,24 +105,22 @@ const GmailPopup = ({ isConnected, onConnect }) => {
                 // Call queryGemini for each email body
                 const geminiResult = await queryGemini(body);
                 const result = extractJSON(geminiResult);
-                result.user_email = localStorage.getItem("userEmail");
+                result.user_email = localStorage.getItem('userEmail');
                 result.current_date = date;
                 result.is_careers_page = 'Yes';
                 console.log('Gemini Result for Email:', result);
 
-
-                fetch("https://job-tracker-production-e381.up.railway.app/api/app/apply", {
-                    method: "POST",
+                fetch('https://job-tracker-production-e381.up.railway.app/api/app/apply', {
+                    method: 'POST',
                     body: JSON.stringify(result),
                     headers: {
-                        "Content-type": "application/json; charset=UTF-8",
-                        "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
-                    }
+                        'Content-type': 'application/json; charset=UTF-8',
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
                 })
-                    .then(response => response.json())
-                    .then(json => console.log(json))
-                    .catch(error => console.error("Error submitting application:", error));
-
+                    .then((response) => response.json())
+                    .then((json) => console.log(json))
+                    .catch((error) => console.error('Error submitting application:', error));
 
                 return { subject, from, body, geminiResult };
             });
@@ -152,11 +134,19 @@ const GmailPopup = ({ isConnected, onConnect }) => {
         }
     };
 
-
+    function extractJSON(rawResponse) {
+        try {
+            const cleanedString = rawResponse.replace(/```[a-z]*\n|```/g, '').trim();
+            return JSON.parse(cleanedString);
+        } catch (error) {
+            console.error('Failed to parse JSON:', error);
+            return null;
+        }
+    }
 
     return (
         <div className="gmail-popup">
-            {!isConnected ? (
+            {!gmailConnected ? (
                 <button
                     onClick={handleConnectGmail}
                     className="py-2 px-6 rounded-lg bg-gradient-to-r from-[#ff0088] to-[#ff8800] text-white font-medium hover:opacity-90 transition ease-in-out duration-300"
@@ -184,7 +174,6 @@ const GmailPopup = ({ isConnected, onConnect }) => {
                                 </li>
                             ))}
                         </ul>
-
                     ) : (
                         <p>No emails found.</p>
                     )}

@@ -6,10 +6,10 @@ const router = express.Router();
 // Save application data (protected route)
 router.post('/apply', authenticate, async (req, res) => {
     const { is_careers_page, company, role_name, application_submitted, current_date, user_email } = req.body;
-    
+
     // Remove the if condition once the latest chrome extension gets approved
     var isRoleNamePresent = (role_name.toLowerCase() != "no" && role_name.toLowerCase() != "na");
-    
+
     if (is_careers_page != "na" && isRoleNamePresent) {
         console.log("Received /apply request with:", req.body);
 
