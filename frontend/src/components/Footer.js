@@ -4,9 +4,11 @@ import { FaTwitter, FaFacebookF, FaLinkedinIn, FaInstagram } from 'react-icons/f
 
 const Footer = () => {
     return (
-        <footer className="bg-gray-900 text-gray-200 py-12 flex flex-col justify-between">
+        <footer className="bg-gray-900 text-gray-200 py-12">
             <div className="max-w-7xl mx-auto px-6">
+                {/* Footer Content with Grid Layout */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
                     {/* Support & Feedback Section */}
                     <div className="space-y-4">
                         <h3 className="text-xl font-semibold text-indigo-400">Support & Feedback</h3>
@@ -37,27 +39,27 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    {/* Quick Links Section (new) */}
-                    <div className="space-y-4 text-center sm:text-left">
+                    {/* Quick Links Section */}
+                    <div className="space-y-4 text-left pl-0">
                         <h3 className="text-xl font-semibold text-indigo-400">Quick Links</h3>
                         <div className="space-y-2">
-                            <Link to="/about" className="text-lg text-indigo-300 hover:text-indigo-400">About Us</Link>
-                            <Link to="/terms" className="text-lg text-indigo-300 hover:text-indigo-400">Terms of Service</Link>
-                            <Link to="/privacy" className="text-lg text-indigo-300 hover:text-indigo-400">Privacy Policy</Link>
-                            <Link to="/faq" className="text-lg text-indigo-300 hover:text-indigo-400">FAQ</Link>
+                            <Link to="/about" className="text-lg text-indigo-300 hover:text-indigo-400 block">About Us</Link>
+                            <Link to="/terms" className="text-lg text-indigo-300 hover:text-indigo-400 block">Terms of Service</Link>
+                            <Link to="/privacyPolicy" className="text-lg text-indigo-300 hover:text-indigo-400 block">Privacy Policy</Link>
+                            <Link to="/faq" className="text-lg text-indigo-300 hover:text-indigo-400 block">FAQ</Link>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Footer Bottom (Copyright Section) */}
-            <div className="text-center text-sm text-gray-400 mt-8">
-                <p>&copy; 2024 Jobossy. All rights reserved.</p>
-            </div>
+                {/* Footer Bottom (Copyright Section) */}
+                <div className="mt-8 border-t border-gray-600 pt-4 text-center text-sm text-gray-400">
+                    <p>&copy; 2024 Jobossy. All rights reserved.</p>
+                </div>
 
-            {/* Optional: A small note about the team */}
-            <div className="text-center text-sm text-gray-400 mt-2">
-                <p>Made with 💙 by the Jobossy team</p>
+                {/* Optional: A small note about the team */}
+                <div className="text-center text-sm text-gray-400 mt-2">
+                    <p>Made with 💙 by the Jobossy team</p>
+                </div>
             </div>
         </footer>
     );

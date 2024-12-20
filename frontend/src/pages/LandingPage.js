@@ -83,7 +83,7 @@ const LandingPage = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-900 text-gray-100 font-sans">
             {/* Header */}
-            <header className="fixed top-0 left-0 w-full py-6 px-10 flex justify-between items-center z-10 bg-opacity-70 text-white">
+            <header className="w-full py-6 px-10 flex justify-between items-center z-10 bg-opacity-70 text-white">
                 {/* Logo Section */}
                 <div className="flex items-center flex-shrink-0">
                     <Link to="/">
@@ -98,6 +98,7 @@ const LandingPage = () => {
                     <Link to="/how-to-use" className="text-lg text-gray-100 hover:text-indigo-300">How To Use</Link>
                 </nav>
             </header>
+
 
             {/* Hero Section */}
             <section className="hero-section py-32 flex flex-col items-center justify-center text-center">
