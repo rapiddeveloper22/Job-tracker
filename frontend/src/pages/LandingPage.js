@@ -86,7 +86,7 @@ const LandingPage = () => {
                 {/* Logo Section */}
                 <div className="flex items-center flex-shrink-0">
                     <img
-                        src={require('../assets/Logo.png')} // Update this path
+                        src={require('../assets/Logo.png')}
                         alt="Job Tracker Logo"
                         className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-16 lg:w-20" // Adjust height/width as needed
                     />

@@ -209,36 +209,7 @@ const GmailPopup = ({ isConnected, onConnect }) => {
                 </div>
             )}
 
-            {!isConnected ? (
-                <button
-                    onClick={handleConnectGmail}
-                    className="py-2 px-6 rounded-lg bg-gradient-to-r from-[#ff0088] to-[#ff8800] text-white font-medium hover:opacity-90 transition ease-in-out duration-300"
-                >
-                    Connect Gmail
-                </button>
-            ) : (
-                <div>
-                    {loading ? (
-                        <p className="text-gray-300">Loading emails...</p>
-                    ) : (
-                        <ul className="text-gray-100">
-                            {emails.map((email, index) => (
-                                <li key={index} className="mb-4 p-4 bg-gray-800 rounded-lg shadow-md">
-                                    <p>
-                                        <strong>From:</strong> {email.from}
-                                    </p>
-                                    <p>
-                                        <strong>Subject:</strong> {email.subject}
-                                    </p>
-                                    <p>
-                                        <strong>Body:</strong> {email.body || 'No body content available'}
-                                    </p>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
-            )}
+
         </div>
     );
 };

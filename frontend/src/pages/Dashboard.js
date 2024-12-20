@@ -143,7 +143,7 @@ const Dashboard = () => {
     const currentApps = filteredApplications.slice(indexOfFirstApp, indexOfLastApp);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-black to-indigo-800 text-gray-100 font-sans py-8 px-6">
+        <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-black to-indigo-800 text-gray-100 font-sans py-8 px-6 pt-16">
             <NavigationBar />
             <div className="max-w-7xl mx-auto bg-gray-800 p-8 mt-8 rounded-3xl shadow-xl">
                 <div className="flex justify-between items-center mb-8">

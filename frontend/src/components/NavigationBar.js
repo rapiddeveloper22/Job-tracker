@@ -3,14 +3,13 @@ import { Link } from 'react-router-dom';
 
 const NavigationBar = () => {
     return (
-        <nav className="bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg shadow-lg mx-6 mt-6">
+        <nav className="bg-gradient-to-r from-gray-800 to-gray-900 shadow-lg fixed top-0 left-0 w-full z-50">
             <div className="container mx-auto px-8 py-4 flex justify-between items-center">
                 {/* Logo */}
-                <Link
-                    to="/"
-                    className="text-3xl font-extrabold text-transparent bg-gradient-to-r from-[#ff0088] to-[#ff8800] bg-clip-text hover:opacity-90 transition duration-300"
-                >
-                    JobTracker
+                <Link to="/">
+                    <h1 className="text-3xl font-bold" style={{ fontFamily: 'Koulen', color: '#d1d1d1' }}>
+                        Jobossy
+                    </h1>
                 </Link>
 
                 {/* Navigation Links */}
