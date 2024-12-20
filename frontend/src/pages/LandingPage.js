@@ -6,40 +6,20 @@ import Footer from '../components/Footer';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const FeatureCard = React.memo(({ title, description }) => (
+    <div className="feature-card bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+        <h3 className="text-2xl font-semibold text-pink-400 mb-4">{title}</h3>
+        <p className="text-gray-300">{description}</p>
+    </div>
+));
+
 const LandingPage = () => {
-    // const particlesInit = useCallback(async (engine) => {
-    //     await loadFull(engine);
-    // }, []);
-
     useEffect(() => {
-        gsap.fromTo(
-            ".hero-content h1",
-            {
-                opacity: 0, // Start fully transparent
-                y: -50,
-            },
-            {
-                opacity: 1, // Fade in to fully opaque
-                y: 0,
-                duration: 1,
-                ease: "power2.out",
-            }
-        );
+        // Set up animations
+        const timeline = gsap.timeline();
 
-        gsap.fromTo(
-            ".hero-content p",
-            {
-                opacity: 0, // Start fully transparent
-                y: 20,
-            },
-            {
-                opacity: 1, // Fade in to fully opaque
-                y: 0,
-                duration: 1,
-                delay: 0.5,
-                ease: "power2.out",
-            }
-        );
+        timeline.fromTo(".hero-content h1", { opacity: 0, y: -50 }, { opacity: 1, y: 0, duration: 1, ease: "power2.out" })
+            .fromTo(".hero-content p", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, delay: 0.5, ease: "power2.out" });
 
         gsap.set(".feature-card, .testimonial-card, .future-features-card", { opacity: 1 });
 
@@ -47,7 +27,8 @@ const LandingPage = () => {
             ".feature-card",
             { opacity: 0, y: 50 },
             {
-                opacity: 1, y: 0, duration: 1.5, stagger: 0.3, scrollTrigger: {
+                opacity: 1, y: 0, duration: 1.5, stagger: 0.3,
+                scrollTrigger: {
                     trigger: ".features-section",
                     start: "top 80%",
                     toggleActions: "play none none none",
@@ -59,7 +40,8 @@ const LandingPage = () => {
             ".testimonial-card",
             { opacity: 0, y: 50 },
             {
-                opacity: 1, y: 0, duration: 1.5, stagger: 0.3, scrollTrigger: {
+                opacity: 1, y: 0, duration: 1.5, stagger: 0.3,
+                scrollTrigger: {
                     trigger: ".testimonials-section",
                     start: "top 80%",
                     toggleActions: "play none none none",
@@ -71,20 +53,25 @@ const LandingPage = () => {
             ".future-feature-card",
             { opacity: 0, y: 50 },
             {
-                opacity: 1, y: 0, duration: 1.5, stagger: 0.3, scrollTrigger: {
+                opacity: 1, y: 0, duration: 1.5, stagger: 0.3,
+                scrollTrigger: {
                     trigger: ".future-features-section",
                     start: "top 80%",
                     toggleActions: "play none none none",
                 }
             }
         );
+
+        // Cleanup ScrollTrigger instances to prevent memory leaks
+        return () => {
+            ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+        };
     }, []);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-900 text-gray-100 font-sans">
             {/* Header */}
             <header className="w-full py-6 px-10 flex justify-between items-center z-10 bg-opacity-70 text-white">
-                {/* Logo Section */}
                 <div className="flex items-center flex-shrink-0">
                     <Link to="/">
                         <h1 className="text-3xl font-bold" style={{ fontFamily: 'Koulen', color: '#f6f6f6' }}>
@@ -98,7 +85,6 @@ const LandingPage = () => {
                     <Link to="/how-to-use" className="text-lg text-gray-100 hover:text-indigo-300">How To Use</Link>
                 </nav>
             </header>
-
 
             {/* Hero Section */}
             <section className="hero-section py-32 flex flex-col items-center justify-center text-center">
@@ -120,37 +106,31 @@ const LandingPage = () => {
 
             {/* Features Section */}
             <section className="features-section py-24 bg-gray-900 text-white">
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-800 via-black to-indigo-900 opacity-80"></div> {/* Background overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-gray-800 via-black to-indigo-900 opacity-80"></div>
                 <div className="max-w-6xl mx-auto text-center relative z-10">
                     <h2 className="font-bold mb-12 bg-gradient-to-r from-pink-500 to-purple-500 text-transparent bg-clip-text animate-fadeIn">
                         Why Choose Us
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <div className="feature-card bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
-                            <h3 className="text-2xl font-semibold text-pink-400 mb-4">Track Your Applications</h3>
-                            <p className="text-gray-300">
-                                Easily track every job you apply to, keeping a detailed record of each step in the process.
-                            </p>
-                        </div>
-                        <div className="feature-card bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
-                            <h3 className="text-2xl font-semibold text-pink-400 mb-4">Stay Organized</h3>
-                            <p className="text-gray-300">
-                                Keep all your job applications organized in one simple dashboard, making it easy to follow up and stay on track.
-                            </p>
-                        </div>
-                        <div className="feature-card bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
-                            <h3 className="text-2xl font-semibold text-pink-400 mb-4">Time-saving Automation</h3>
-                            <p className="text-gray-300">
-                                Reduce the stress of manual tracking. We automate the process so you can focus on preparing for interviews.
-                            </p>
-                        </div>
+                        <FeatureCard
+                            title="Track Your Applications"
+                            description="Easily track every job you apply to, keeping a detailed record of each step in the process."
+                        />
+                        <FeatureCard
+                            title="Stay Organized"
+                            description="Keep all your job applications organized in one simple dashboard, making it easy to follow up and stay on track."
+                        />
+                        <FeatureCard
+                            title="Time-saving Automation"
+                            description="Reduce the stress of manual tracking. We automate the process so you can focus on preparing for interviews."
+                        />
                     </div>
                 </div>
             </section>
 
             {/* Future Features Section */}
             <section className="future-features-section py-24 relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-800 via-black to-indigo-900 opacity-80"></div> {/* Background overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-gray-800 via-black to-indigo-900 opacity-80"></div>
                 <div className="max-w-6xl mx-auto text-center relative z-10">
                     <h2 className="font-bold mb-12 bg-gradient-to-r from-purple-400 to-pink-600 text-transparent bg-clip-text">
                         Coming Soon: Future Features
@@ -180,7 +160,7 @@ const LandingPage = () => {
 
             {/* Testimonials Section */}
             <section className="testimonials-section py-24 relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-800 via-black to-indigo-900 opacity-80"></div> {/* Background overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-gray-800 via-black to-indigo-900 opacity-80"></div>
                 <div className="max-w-6xl mx-auto text-center relative z-10">
                     <h2 className="font-bold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-teal-600">
                         What People Are Saying
@@ -194,23 +174,21 @@ const LandingPage = () => {
                         </div>
                         <div className="testimonial-card bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:scale-105">
                             <p className="text-lg text-gray-200 italic mb-4">
-                                “The best job application tracker out there!”
+                                “I saved so much time and stress by automating my applications!”
                             </p>
-                            <h4 className="text-teal-400 font-semibold">- Dhakshinamurthy</h4>
+                            <h4 className="text-teal-400 font-semibold">- Julian</h4>
                         </div>
                         <div className="testimonial-card bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:scale-105">
                             <p className="text-lg text-gray-200 italic mb-4">
-                                “Highly recommend it to all job seekers.”
+                                “I saved so much time and stress by automating my applications!”
                             </p>
-                            <h4 className="text-teal-400 font-semibold">- Mental Balamurugan</h4>
+                            <h4 className="text-teal-400 font-semibold">- Julian</h4>
                         </div>
                     </div>
                 </div>
             </section>
 
-
-
-            {/* Footer Component */}
+            {/* Footer */}
             <Footer />
         </div>
     );
