@@ -9,8 +9,8 @@ const GEMINI_API_KEY = 'AIzaSyCRTW69xL9c7Ht8Wo7MwN5Fk6UupDQalEU';
 const GmailPopup = ({ isConnected, onConnect }) => {
     const [emails, setEmails] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [showPopup, setShowPopup] = useState(true); // State for controlling the popup visibility
 
-    // Check if the user is already connected
     useEffect(() => {
         const isGmailConnected = localStorage.getItem('isGmailConnected') === 'true';
         if (isGmailConnected) {
@@ -18,7 +18,6 @@ const GmailPopup = ({ isConnected, onConnect }) => {
         }
     }, []);
 
-    // Function to clean up and extract JSON from wrapped string
     function extractJSON(rawResponse) {
         try {
             const cleanedString = rawResponse.replace(/```[a-z]*\n|```/g, "").trim();
@@ -32,8 +31,7 @@ const GmailPopup = ({ isConnected, onConnect }) => {
     async function queryGemini(email) {
         try {
             const prompt = `You are an assistant that extracts job application details from email content. Check if the email is about a job application, if yes then return a JSON object with: - "company": the company name, - "role_name": the job role mentioned, - "application_submitted": true as string if it seems like an application was submitted. If its not about a job application, return NA for all fields. Give all the values as string. Text: ${email}`;
-            const url =
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
             const data = JSON.stringify({
                 contents: [
                     {
@@ -79,9 +77,10 @@ const GmailPopup = ({ isConnected, onConnect }) => {
                     await authInstance.signIn();
                 }
 
-                onConnect(); // Update parent state
-                localStorage.setItem('isGmailConnected', 'true'); // Persist connection state
-                fetchEmails(); // Fetch top 10 emails
+                onConnect();
+                localStorage.setItem('isGmailConnected', 'true');
+                fetchEmails();
+                setShowPopup(false); // Close popup after successful connection
             } catch (err) {
                 console.error('Error connecting to Gmail:', err);
             }
@@ -102,9 +101,9 @@ const GmailPopup = ({ isConnected, onConnect }) => {
                 const isSignedIn = authInstance.isSignedIn.get();
 
                 if (isSignedIn) {
-                    fetchEmails(); // Automatically fetch emails if already connected
+                    fetchEmails();
                 } else {
-                    localStorage.removeItem('isGmailConnected'); // Clear connection state if not signed in
+                    localStorage.removeItem('isGmailConnected');
                 }
             } catch (err) {
                 console.error('Error during auto-connect to Gmail:', err);
@@ -138,7 +137,6 @@ const GmailPopup = ({ isConnected, onConnect }) => {
 
                 let body = '';
 
-                // Extract the body from the message payload
                 if (message.result.payload.parts) {
                     const part = message.result.payload.parts.find(
                         (part) => part.mimeType === 'text/plain' || part.mimeType === 'text/html'
@@ -151,7 +149,6 @@ const GmailPopup = ({ isConnected, onConnect }) => {
                     body = atob(message.result.payload.body.data.replace(/-/g, '+').replace(/_/g, '/'));
                 }
 
-                // Call queryGemini for each email body
                 const geminiResult = await queryGemini(body);
                 const result = extractJSON(geminiResult);
                 result.user_email = localStorage.getItem("userEmail");
@@ -186,6 +183,32 @@ const GmailPopup = ({ isConnected, onConnect }) => {
 
     return (
         <div className="gmail-popup">
+            {showPopup && !isConnected && (
+                <div className="fixed inset-0 bg-gray-900 bg-opacity-80 flex justify-center items-center">
+                    <div className="bg-gray-800 rounded-lg p-6 text-center shadow-xl w-96 border border-gray-700">
+                        <h2 className="text-xl font-bold text-white mb-4">Why Connect to Gmail?</h2>
+                        <p className="mb-6 text-gray-300">
+                            Connecting your Gmail allows us to automatically track the applications you submit,
+                            even from your mobile, and keep all your job applications organized.
+                        </p>
+                        <div className="flex justify-between">
+                            <button
+                                className="py-2 px-6 rounded-lg bg-gray-600 text-gray-200 font-medium hover:bg-gray-500 transition ease-in-out duration-300"
+                                onClick={() => setShowPopup(false)}
+                            >
+                                Close
+                            </button>
+                            <button
+                                className="py-2 px-6 rounded-lg bg-gradient-to-r from-[#ff0088] to-[#ff8800] text-white font-medium hover:opacity-90 transition ease-in-out duration-300"
+                                onClick={handleConnectGmail}
+                            >
+                                Connect Gmail
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {!isConnected ? (
                 <button
                     onClick={handleConnectGmail}
@@ -195,10 +218,9 @@ const GmailPopup = ({ isConnected, onConnect }) => {
                 </button>
             ) : (
                 <div>
-                    {/* <h3 className="text-lg font-semibold mb-4">Recent Emails</h3>
                     {loading ? (
-                        <p>Loading emails...</p>
-                    ) : emails.length > 0 ? (
+                        <p className="text-gray-300">Loading emails...</p>
+                    ) : (
                         <ul className="text-gray-100">
                             {emails.map((email, index) => (
                                 <li key={index} className="mb-4 p-4 bg-gray-800 rounded-lg shadow-md">
@@ -214,9 +236,7 @@ const GmailPopup = ({ isConnected, onConnect }) => {
                                 </li>
                             ))}
                         </ul>
-                    ) : (
-                        <p>No emails found.</p>
-                    )} */}
+                    )}
                 </div>
             )}
         </div>

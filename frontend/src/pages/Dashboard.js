@@ -147,7 +147,7 @@ const Dashboard = () => {
                 />
 
                 <div>
-                    {localStorage.getItem('isGmailConnected') != null ? (
+                    {localStorage.getItem('isGmailConnected') == null ? (
                         <GmailPopup
                             isConnected={isGmailConnected}
                             onConnect={() => setIsGmailConnected(true)}
