@@ -7,6 +7,9 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import LandingPage from "./pages/LandingPage";
 import HowToUse from "./pages/HowToUse";
 import FeedbackForm from "./pages/FeedbackForm";
+import TermsOfService from "./pages/TermsOfService";
+import FAQ from "./pages/FAQ";
+import AboutUs from "./pages/AboutUs";
 import "./index.css"; // TailwindCSS styles
 
 // Protected Route Component
@@ -26,6 +29,9 @@ const App = () => {
         <Route path="/how-to-use" element={<HowToUse />} />
         <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
         <Route path="/feedbackForm" element={<FeedbackForm />} />
+        <Route path="/termsOfService" element={<TermsOfService />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/aboutUs" element={<AboutUs />} />
 
         {/* Protected Route */}
         <Route path="/dashboard" element={<ProtectedRoute element={Dashboard} />} />

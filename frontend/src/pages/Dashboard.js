@@ -7,7 +7,7 @@ import ApplicationTable from '../components/ApplicationTable';
 import GmailPopup from '../components/GmailPopup';
 import { FiDownload } from 'react-icons/fi';
 import * as XLSX from 'xlsx';
-import Footer from '../components/Footer';  // Import Footer component here
+import Footer from '../components/Footer'; // Import Footer component here
 
 const Dashboard = () => {
     const userEmail = localStorage.getItem('userEmail');
@@ -144,9 +144,11 @@ const Dashboard = () => {
     const currentApps = filteredApplications.slice(indexOfFirstApp, indexOfLastApp);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-black to-indigo-800 text-gray-100 font-sans pt-16 flex flex-col">
+        <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-900 via-black to-indigo-800 text-gray-100 font-sans pt-0">
             <NavigationBar />
-            <div className="flex-1 max-w-full mx-auto bg-gray-800 p-8 mt-8 rounded-3xl shadow-xl overflow-hidden">
+            {/* Content Section */}
+            <div className="flex-1 max-w-full mx-auto bg-gray-800 p-8 mt-8 rounded-3xl shadow-xl overflow-hidden mb-12">
+                {/* Added mb-12 for spacing */}
                 <div className="flex justify-between items-center mb-8">
                     <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#ff0088] to-[#ff8800]">
                         Your Applications
@@ -174,6 +176,7 @@ const Dashboard = () => {
                     onPageLoad={loadMoreApplications}
                 />
 
+                {/* Gmail Popup Section */}
                 <div>
                     {localStorage.getItem('isGmailConnected') == null ? (
                         <GmailPopup
@@ -186,10 +189,13 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* Footer */}
+            {/* Footer Section */}
             <Footer />
         </div>
     );
+
+
+
 };
 
 export default Dashboard;

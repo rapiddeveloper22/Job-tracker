@@ -4,7 +4,7 @@ import { FaTwitter, FaFacebookF, FaLinkedinIn, FaInstagram } from 'react-icons/f
 
 const Footer = () => {
     return (
-        <footer className="bg-gray-900 text-gray-200 py-12 mt-8">
+        <footer className="bg-gray-900 text-gray-200 py-12">
             <div className="max-w-7xl mx-auto px-6">
                 {/* Footer Content with Grid Layout */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -43,8 +43,8 @@ const Footer = () => {
                     <div className="space-y-4 text-left pl-0">
                         <h3 className="text-xl font-semibold text-indigo-400">Quick Links</h3>
                         <div className="space-y-2">
-                            <Link to="/about" className="text-lg text-indigo-300 hover:text-indigo-400 block">About Us</Link>
-                            <Link to="/terms" className="text-lg text-indigo-300 hover:text-indigo-400 block">Terms of Service</Link>
+                            <Link to="/aboutUs" className="text-lg text-indigo-300 hover:text-indigo-400 block">About Us</Link>
+                            <Link to="/termsOfService" className="text-lg text-indigo-300 hover:text-indigo-400 block">Terms of Service</Link>
                             <Link to="/privacyPolicy" className="text-lg text-indigo-300 hover:text-indigo-400 block">Privacy Policy</Link>
                             <Link to="/faq" className="text-lg text-indigo-300 hover:text-indigo-400 block">FAQ</Link>
                         </div>

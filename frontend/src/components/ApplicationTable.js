@@ -23,7 +23,7 @@ const ApplicationTable = ({ applications, onSort, sortBy, sortOrder, onPageLoad 
     }, []);
 
     return (
-        <div className="relative">
+        <div className="relative pb-10"> {/* Added padding at the bottom */}
 
             {/* Table */}
             <div className="overflow-x-auto bg-gray-700 rounded-lg shadow-md">

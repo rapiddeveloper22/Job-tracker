@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import Footer from '../components/Footer';
+import NavigationBar from "../components/NavigationBar";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -69,9 +70,9 @@ const LandingPage = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-900 text-gray-100 font-sans">
+        <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-black to-indigo-900 text-gray-100 font-sans">
             {/* Header */}
-            <header className="w-full py-6 px-10 flex justify-between items-center z-10 bg-opacity-70 text-white">
+            {/* <header className="w-full py-6 px-10 flex justify-between items-center z-10 bg-opacity-70 text-white">
                 <div className="flex items-center flex-shrink-0">
                     <Link to="/">
                         <h1 className="text-3xl font-bold" style={{ fontFamily: 'Koulen', color: '#f6f6f6' }}>
@@ -84,10 +85,11 @@ const LandingPage = () => {
                     <Link to="/signup" className="text-lg text-gray-100 hover:text-indigo-300">Signup</Link>
                     <Link to="/how-to-use" className="text-lg text-gray-100 hover:text-indigo-300">How To Use</Link>
                 </nav>
-            </header>
+            </header> */}
+            <NavigationBar />
 
             {/* Hero Section */}
-            <section className="hero-section py-32 flex flex-col items-center justify-center text-center">
+            <section className="hero-section py-32 flex flex-col items-center justify-center text-center flex-grow">
                 <div className="hero-content max-w-4xl mx-auto">
                     <h1 className="text-7xl font-extrabold mb-6 bg-gradient-to-r from-purple-400 to-pink-600 text-transparent bg-clip-text">
                         Supercharge Your Job Hunt!
@@ -192,6 +194,8 @@ const LandingPage = () => {
             <Footer />
         </div>
     );
+
+
 };
 
 export default LandingPage;
