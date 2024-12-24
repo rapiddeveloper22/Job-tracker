@@ -59,5 +59,6 @@
     "html-webpack-plugin": "^5.6.3",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17"
-  }
+  },
+  "proxy": "https://job-tracker-production-e381.up.railway.app"
 }
