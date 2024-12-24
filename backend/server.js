@@ -11,7 +11,7 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.options('*', cors()); // Enable CORS for preflight requests
+// app.options('*', cors()); // Enable CORS for preflight requests
 app.use(bodyParser.json());
 
 // MongoDB Connection
@@ -31,7 +31,7 @@ app.use('/api/auth', authRoutes); // Authentication routes
 app.use('/api/app', applicationRoutes); // Application-related routes
 
 // Server Start
-const PORT = 3001;
+const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 

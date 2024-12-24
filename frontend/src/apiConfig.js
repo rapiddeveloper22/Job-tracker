@@ -1,6 +1,6 @@
 const API_CONFIG = {
     // BASE_URL: "https://job-tracker-production-e381.up.railway.app",
-    BASE_URL: "http://localhost:3001",
+    BASE_URL: "http://localhost:3000",
     AUTH: {
         LOGIN: "/api/auth/login",
         SIGNUP: "/api/auth/signup",
