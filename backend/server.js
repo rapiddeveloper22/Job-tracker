@@ -6,9 +6,22 @@ const bodyParser = require('body-parser');
 const app = express();
 
 // Middleware
+const allowedOrigins = [
+    'https://jobossy.vercel.app',  // Frontend URL 1
+    'https://jobossy.xyz', // Frontend URL 2
+    'http://localhost:3001'  // Localhost URL for local testing (adjust the port if needed)
+];
+
 app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: (origin, callback) => {
+        if (allowedOrigins.includes(origin) || !origin) {  // Allow localhost requests as well
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 // app.options('*', cors()); // Enable CORS for preflight requests
