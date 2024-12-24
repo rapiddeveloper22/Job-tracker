@@ -47,7 +47,6 @@ router.post('/apply', authenticate, async (req, res) => {
     }
 });
 
-
 // Fetch all applications (protected route)
 router.post('/getAll', async (req, res) => {
     const user_email = req.body.user_email; // Get email from token
@@ -58,6 +57,38 @@ router.post('/getAll', async (req, res) => {
     } catch (error) {
         console.error('Error fetching applications:', error);
         res.status(500).json({ error: 'Failed to fetch applications' });
+    }
+});
+
+// Update application data (protected route)
+router.put('/updateApplication', authenticate, async (req, res) => {
+    const { id, userEmail, updatedFields } = req.body;
+
+    try {
+        // Find the application by ID and check if the user_email matches
+        const application = await Application.findOne({ _id: id });
+
+        if (!application) {
+            return res.status(404).json({ message: 'Application not found' });
+        }
+
+        if (application.user_email !== userEmail) {
+            return res.status(403).json({ message: 'Unauthorized access to update this application' });
+        }
+
+        // Update the application fields
+        Object.keys(updatedFields).forEach((key) => {
+            console.log(`Key: ${key}, Application Value: ${application[key]}, Updated Value: ${updatedFields[key]}`);
+            application[key] = updatedFields[key];
+        });
+
+        // Save the updated application
+        const updatedApplication = await application.save();
+        console.log(updatedApplication);
+        res.json(updatedApplication); // Return the updated application data
+    } catch (error) {
+        console.error('Error updating application:', error);
+        res.status(500).json({ error: 'Failed to update application' });
     }
 });
 

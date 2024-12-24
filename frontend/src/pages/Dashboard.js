@@ -22,6 +22,7 @@ const Dashboard = () => {
     const [applications, setApplications] = useState([]);
     const [filteredApplications, setFilteredApplications] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const [tagsFilter, setTagsFilter] = useState(''); // New state for tags filter
     const [sortBy, setSortBy] = useState(null);
     const [sortOrder, setSortOrder] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
@@ -100,7 +101,8 @@ const Dashboard = () => {
 
         let filtered = applications.filter((app) =>
             app.company.toLowerCase().includes(query.toLowerCase()) ||
-            app.role_name.toLowerCase().includes(query.toLowerCase())
+            app.role_name.toLowerCase().includes(query.toLowerCase()) ||
+            (app.tags && app.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase())))
         );
 
         if (isDate) {
@@ -113,6 +115,13 @@ const Dashboard = () => {
         setFilteredApplications(filtered);
         setCurrentPage(1);
     };
+
+    const handleClearSearch = () => {
+        setSearchQuery('');
+        setFilteredApplications(applications); // Reset to all applications when clearing the search
+        setCurrentPage(1); // Reset to the first page when clearing the search
+    };
+
 
     const handleSort = (field) => {
         const order = sortBy === field && sortOrder === 'asc' ? 'desc' : 'asc';
@@ -128,6 +137,11 @@ const Dashboard = () => {
                 return order === 'asc'
                     ? a.company.localeCompare(b.company)
                     : b.company.localeCompare(a.company);
+            } else if (field === 'tags') {
+                // Sorting by tags
+                return order === 'asc'
+                    ? (a.tags || []).join(', ').localeCompare((b.tags || []).join(', '))
+                    : (b.tags || []).join(', ').localeCompare((a.tags || []).join(', '));
             }
             return 0;
         });
@@ -135,8 +149,48 @@ const Dashboard = () => {
         setFilteredApplications(sortedApps);
     };
 
+    const handleTagsFilter = (e) => {
+        const tagQuery = e.target.value;
+        setTagsFilter(tagQuery);
+
+        const filtered = applications.filter((app) =>
+            app.tags && app.tags.some((tag) => tag.toLowerCase().includes(tagQuery.toLowerCase()))
+        );
+
+        setFilteredApplications(filtered);
+        setCurrentPage(1);
+    };
+
     const loadMoreApplications = () => {
         setCurrentPage((prevPage) => prevPage + 1);
+    };
+
+    const updateApplication = async (id, updatedFields) => {
+        console.log(updatedFields);
+        try {
+            const response = await fetch(`${API_CONFIG.BASE_URL}/api/app/updateApplication`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${authToken}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id, userEmail, updatedFields }),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                setApplications((prev) =>
+                    prev.map((app) => (app._id === id ? { ...app, ...updatedFields } : app))
+                );
+                setFilteredApplications((prev) =>
+                    prev.map((app) => (app._id === id ? { ...app, ...updatedFields } : app))
+                );
+            } else {
+                alert(data.message || 'Failed to update application');
+            }
+        } catch (err) {
+            console.error('Error updating application:', err);
+        }
     };
 
     const indexOfLastApp = currentPage * applicationsPerPage;
@@ -165,7 +219,7 @@ const Dashboard = () => {
                 <SearchBar
                     searchQuery={searchQuery}
                     onSearchChange={handleSearch}
-                    onClearSearch={() => setSearchQuery('')}
+                    onClearSearch={handleClearSearch}
                 />
 
                 <ApplicationTable
@@ -174,6 +228,7 @@ const Dashboard = () => {
                     sortBy={sortBy}
                     sortOrder={sortOrder}
                     onPageLoad={loadMoreApplications}
+                    updateApplication={updateApplication}
                 />
 
                 {/* Gmail Popup Section */}
@@ -193,9 +248,6 @@ const Dashboard = () => {
             <Footer />
         </div>
     );
-
-
-
 };
 
 export default Dashboard;

@@ -11,6 +11,7 @@ body {
   background-color: #0a0a0a;
   color: white;
   box-sizing: border-box;
+  /* overflow-y: hidden; */
   /* Ensure text is white by default */
 }
 

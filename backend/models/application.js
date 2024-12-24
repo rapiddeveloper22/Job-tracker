@@ -7,6 +7,8 @@ const applicationSchema = new mongoose.Schema({
     role_name: { type: String, required: true },
     application_submitted: { type: String, required: true },
     current_date: { type: String, required: true },
-});
+    tags: { type: [String], default: [] }, // Add tags field
+    notes: { type: String, default: '' },  // Add notes field
+}, { strict: false });
 
 module.exports = mongoose.model('Application', applicationSchema);
