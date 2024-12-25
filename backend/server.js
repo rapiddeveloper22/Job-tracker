@@ -24,8 +24,20 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
-// app.options('*', cors()); // Enable CORS for preflight requests
+app.options('*', (req, res) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.sendStatus(200);
+}); // Enable CORS for preflight requests
 app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    console.log('Headers:', req.headers);
+    next();
+});
+
 
 // MongoDB Connection
 mongoose.connect('mongodb+srv://mmaswin22:bRTITTtZXOIH8Op4@cluster0.malig.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
