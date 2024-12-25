@@ -8,7 +8,7 @@ const app = express();
 // Middleware
 const allowedOrigins = [
     'https://jobossy.vercel.app',  // Frontend URL 1
-    'https://jobossy.xyz', // Frontend URL 2
+    'https://www.jobossy.xyz', // Frontend URL 2
     'http://localhost:3001'  // Localhost URL for local testing (adjust the port if needed)
 ];
 

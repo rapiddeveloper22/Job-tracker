@@ -7,7 +7,8 @@ import ApplicationTable from '../components/ApplicationTable';
 import GmailPopup from '../components/GmailPopup';
 import { FiDownload } from 'react-icons/fi';
 import * as XLSX from 'xlsx';
-import Footer from '../components/Footer'; // Import Footer component here
+import Footer from '../components/Footer';
+import { AiOutlineMail } from 'react-icons/ai';
 
 const Dashboard = () => {
     const userEmail = localStorage.getItem('userEmail');
@@ -29,6 +30,7 @@ const Dashboard = () => {
     const [applicationsPerPage] = useState(10);
     const lastApplicationElementRef = useRef();
     const [isGmailConnected, setIsGmailConnected] = useState(false);
+    const [showGmailPopup, setShowGmailPopup] = useState(true); // State to show/hide Gmail popup
 
     useEffect(() => {
         const fetchApplications = async () => {
@@ -55,6 +57,12 @@ const Dashboard = () => {
         };
 
         fetchApplications();
+
+        // Check if Gmail is connected (from localStorage)
+        const gmailConnected = localStorage.getItem('isGmailConnected');
+        if (gmailConnected) {
+            setIsGmailConnected(true);
+        }
     }, [userEmail, authToken]);
 
     const handleLogout = () => {
@@ -121,7 +129,6 @@ const Dashboard = () => {
         setFilteredApplications(applications); // Reset to all applications when clearing the search
         setCurrentPage(1); // Reset to the first page when clearing the search
     };
-
 
     const handleSort = (field) => {
         const order = sortBy === field && sortOrder === 'asc' ? 'desc' : 'asc';
@@ -197,23 +204,46 @@ const Dashboard = () => {
     const indexOfFirstApp = indexOfLastApp - applicationsPerPage;
     const currentApps = filteredApplications.slice(indexOfFirstApp, indexOfLastApp);
 
+    const handleGmailButtonClick = () => {
+        console.log(isGmailConnected);
+        // Check localStorage before showing the popup
+        // const gmailConnected = localStorage.getItem('isGmailConnected');
+        // console.log(gmailConnected);
+        if (!isGmailConnected) {
+            console.log("Inside if condition");
+            setShowGmailPopup(true);
+            console.log(showGmailPopup); // Show the Gmail popup if Gmail is not connected
+        }
+    };
+
     return (
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-900 via-black to-indigo-800 text-gray-100 font-sans pt-0">
             <NavigationBar />
             {/* Content Section */}
             <div className="flex-1 max-w-full mx-auto bg-gray-800 p-8 mt-8 rounded-3xl shadow-xl overflow-hidden mb-12">
-                {/* Added mb-12 for spacing */}
                 <div className="flex justify-between items-center mb-8">
                     <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#ff0088] to-[#ff8800]">
                         Your Applications
                     </h2>
-                    <button
-                        onClick={exportToExcel}
-                        className="p-3 rounded-full bg-gray-700 hover:bg-[#ff0088] text-white shadow-md transition ease-in-out duration-300"
-                        title="Export to Excel"
-                    >
-                        <FiDownload className="text-xl" />
-                    </button>
+                    <div className="flex items-center space-x-4">
+                        {/* Connect Gmail Icon with matching style */}
+                        {!isGmailConnected && !localStorage.getItem('isGmailConnected') && (
+                            <button
+                                onClick={handleGmailButtonClick} // Check localStorage before opening Gmail popup
+                                className="p-3 rounded-full bg-gray-700 hover:bg-[#ff0088] text-white shadow-md transition ease-in-out duration-300"
+                                title="Connect to Gmail"
+                            >
+                                <AiOutlineMail className="text-2xl" />
+                            </button>
+                        )}
+                        <button
+                            onClick={exportToExcel}
+                            className="p-3 rounded-full bg-gray-700 hover:bg-[#ff0088] text-white shadow-md transition ease-in-out duration-300"
+                            title="Export to Excel"
+                        >
+                            <FiDownload className="text-xl" />
+                        </button>
+                    </div>
                 </div>
 
                 <SearchBar
@@ -231,23 +261,25 @@ const Dashboard = () => {
                     updateApplication={updateApplication}
                 />
 
-                {/* Gmail Popup Section */}
-                <div>
-                    {localStorage.getItem('isGmailConnected') == null ? (
-                        <GmailPopup
-                            isConnected={isGmailConnected}
-                            onConnect={() => setIsGmailConnected(true)}
-                        />
-                    ) : (
-                        <div></div>
-                    )}
-                </div>
+                {/* Show Gmail Popup on button click */}
+                {showGmailPopup && (
+                    <GmailPopup
+                        isConnected={isGmailConnected}
+                        onConnect={() => {
+                            setIsGmailConnected(true);
+                        }}
+                        onClose={() => setShowGmailPopup(false)} // Option to close the popup
+                    />
+                )}
             </div>
 
             {/* Footer Section */}
             <Footer />
         </div>
+
     );
 };
+
+
 
 export default Dashboard;

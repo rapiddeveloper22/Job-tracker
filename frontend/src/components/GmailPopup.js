@@ -6,10 +6,10 @@ const API_KEY = 'AIzaSyDViSkkMRFM8SMDg-gA0_Aefjy6YfQkeF0';
 const SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
 const GEMINI_API_KEY = 'AIzaSyCRTW69xL9c7Ht8Wo7MwN5Fk6UupDQalEU';
 
-const GmailPopup = ({ isConnected, onConnect }) => {
+const GmailPopup = ({ isConnected, onConnect, onClose }) => {
     const [emails, setEmails] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [showPopup, setShowPopup] = useState(true); // State for controlling the popup visibility
+    // const [showPopup, setShowPopup] = useState(true); // State for controlling the popup visibility
 
     useEffect(() => {
         const isGmailConnected = localStorage.getItem('isGmailConnected') === 'true';
@@ -80,7 +80,7 @@ const GmailPopup = ({ isConnected, onConnect }) => {
                 onConnect();
                 localStorage.setItem('isGmailConnected', 'true');
                 fetchEmails();
-                setShowPopup(false); // Close popup after successful connection
+                // setShowPopup(false); // Close popup after successful connection
             } catch (err) {
                 console.error('Error connecting to Gmail:', err);
             }
@@ -183,7 +183,7 @@ const GmailPopup = ({ isConnected, onConnect }) => {
 
     return (
         <div className="gmail-popup">
-            {showPopup && !isConnected && (
+            {!isConnected && (
                 <div className="fixed inset-0 bg-gray-900 bg-opacity-80 flex justify-center items-center">
                     <div className="bg-gray-800 rounded-lg p-6 text-center shadow-xl w-96 border border-gray-700">
                         <h2 className="text-xl font-bold text-white mb-4">Why Connect to Gmail?</h2>
@@ -194,7 +194,8 @@ const GmailPopup = ({ isConnected, onConnect }) => {
                         <div className="flex justify-between">
                             <button
                                 className="py-2 px-6 rounded-lg bg-gray-600 text-gray-200 font-medium hover:bg-gray-500 transition ease-in-out duration-300"
-                                onClick={() => setShowPopup(false)}
+                                // onClick={() => setShowPopup(false)}
+                                onClick={onClose}
                             >
                                 Close
                             </button>

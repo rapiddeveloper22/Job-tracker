@@ -12,6 +12,7 @@ export const useApplications = () => {
 // Context Provider Component
 export const ApplicationProvider = ({ children }) => {
     const [applications, setApplications] = useState([]);
+    // const [isGmailConnected, setIsGmailConnected] = useState(false);
 
     const authToken = localStorage.getItem('authToken');
     const userEmail = localStorage.getItem('userEmail');
