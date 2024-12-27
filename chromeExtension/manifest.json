@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
-    "name": "Job tracker",
-    "version": "1.2",
+    "name": "Jobossy",
+    "version": "1.3",
     "description": "Automatically tracks the job which the user applies.",
     "icons": {
         "128": "Extension.png"
