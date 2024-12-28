@@ -9,6 +9,7 @@ const applicationSchema = new mongoose.Schema({
     current_date: { type: String, required: true },
     tags: { type: [String], default: [] }, // Add tags field
     notes: { type: String, default: '' },  // Add notes field
+    job_link: { type: String, required: true },
 }, { strict: false });
 
 module.exports = mongoose.model('Application', applicationSchema);

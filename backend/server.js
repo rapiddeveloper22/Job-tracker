@@ -12,20 +12,6 @@ const allowedOrigins = [
     'http://localhost:3001'  // Localhost URL for local testing (adjust the port if needed)
 ];
 
-// app.use(cors({
-//     origin: (origin, callback) => {
-//         if (allowedOrigins.includes(origin) || !origin) {  // Allow localhost requests as well
-//             callback(null, true);
-//         } else {
-//             callback(new Error('Not allowed by CORS'));
-//         }
-//     },
-//     credentials: true,
-//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//     allowedHeaders: ['Content-Type', 'Authorization']
-// }));
-
-
 app.use(cors({
     origin: '*',
     credentials: true,
@@ -60,10 +46,12 @@ mongoose.connect('mongodb+srv://mmaswin22:bRTITTtZXOIH8Op4@cluster0.malig.mongod
 // Import Routes
 const authRoutes = require('./routes/auth');
 const applicationRoutes = require('./routes/applications');
+const scrapeRoutes = require('./routes/scrape');
 
 // Routes
 app.use('/api/auth', authRoutes); // Authentication routes
 app.use('/api/app', applicationRoutes); // Application-related routes
+app.use('/api/scrape', scrapeRoutes);
 
 // Server Start
 const PORT = 3000;

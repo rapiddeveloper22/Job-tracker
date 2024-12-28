@@ -11,6 +11,7 @@ import FeedbackForm from "./pages/FeedbackForm";
 import TermsOfService from "./pages/TermsOfService";
 import FAQ from "./pages/FAQ";
 import AboutUs from "./pages/AboutUs";
+import ApplicationDetails from "./pages/ApplicationDetails";
 import "./index.css"; // TailwindCSS styles
 
 // Protected Route Component
@@ -36,6 +37,7 @@ const App = () => {
 
         {/* Protected Route */}
         <Route path="/dashboard" element={<ProtectedRoute element={Dashboard} />} />
+        <Route path="/application/:id" element={<ProtectedRoute element={ApplicationDetails} />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" />} />

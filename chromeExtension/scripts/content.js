@@ -159,6 +159,7 @@ async function scrapeAndProcess() {
         const currentDate = new Date();
         const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getFullYear()}`;
         result.current_date = formattedDate;
+        result.job_link = window.location.href;
 
         console.log("Processed result:", result);
 
