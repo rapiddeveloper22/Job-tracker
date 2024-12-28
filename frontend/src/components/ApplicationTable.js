@@ -161,7 +161,6 @@ const ApplicationTable = ({ applications, onSort, sortBy, sortOrder, onPageLoad,
                                             className="hover:bg-gray-700 transition duration-300 ease-in-out cursor-pointer"
                                             onClick={() => handleRowClick(app)}
                                         >
-                                            {console.log(app)}
                                             <td className="p-4">{app.company}</td>
                                             <td className="p-4">{app.role_name}</td>
                                             <td className="p-4">{app.current_date}</td>
