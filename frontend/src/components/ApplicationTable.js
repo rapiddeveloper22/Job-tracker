@@ -143,7 +143,7 @@ const ApplicationTable = ({ applications, onSort, sortBy, sortOrder, onPageLoad,
                             </th>
                             <th className="p-4 text-left">Tags</th>
                             <th className="p-4 text-left">Notes</th>
-                            <th className="p-4 text-left">Actions</th>
+                            {/* <th className="p-4 text-left">Actions</th> */}
                         </tr>
                     </thead>
 
@@ -232,19 +232,19 @@ const ApplicationTable = ({ applications, onSort, sortBy, sortOrder, onPageLoad,
                                                     </button>
                                                 )}
                                             </td>
-                                            <td className="p-4">
-                                                <button
-                                                    className="text-sm text-green-400 hover:underline flex items-center"
-                                                    onClick={() => toggleExpandRow(app._id)}
-                                                >
-                                                    {isExpanded ? (
-                                                        <FaMinus className="inline-block mr-2 text-lg" />
-                                                    ) : (
-                                                        <FaPlus className="inline-block mr-2 text-lg" />
-                                                    )}
-                                                    {isExpanded ? 'Collapse' : 'Expand'}
-                                                </button>
-                                            </td>
+                                            {/* <td className="p-4">
+                                            <button
+                                                className="text-sm text-green-400 hover:underline flex items-center"
+                                                onClick={() => toggleExpandRow(app._id)}
+                                            >
+                                                {isExpanded ? (
+                                                    <FaMinus className="inline-block mr-2 text-lg" />
+                                                ) : (
+                                                    <FaPlus className="inline-block mr-2 text-lg" />
+                                                )}
+                                                {isExpanded ? 'Collapse' : 'Expand'}
+                                            </button>
+                                            </td> */}
                                         </tr>
 
                                         {isExpanded && profiles.length > 0 && (
