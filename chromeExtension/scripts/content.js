@@ -220,7 +220,8 @@ async function startMonitoring() {
         // Add a slight delay to allow dynamic content to stabilize
         setTimeout(() => {
             console.log("Starting content monitoring...");
-            scrapeAndProcess();
+            if (!window.location.href.includes("localhost") && !window.location.href.includes("jobossy"))
+                scrapeAndProcess();
         }, 2000);
     } catch (error) {
         console.error("Error during page load monitoring:", error);

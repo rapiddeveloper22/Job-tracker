@@ -1,6 +1,6 @@
 const API_CONFIG = {
-    BASE_URL: "https://job-tracker-production-e381.up.railway.app",
-    // BASE_URL: "http://localhost:3000",
+    // BASE_URL: "https://job-tracker-production-e381.up.railway.app",
+    BASE_URL: "http://localhost:3000",
     AUTH: {
         LOGIN: "/api/auth/login",
         SIGNUP: "/api/auth/signup",
@@ -13,7 +13,12 @@ const API_CONFIG = {
         APPLY: "/api/app/apply",
     },
     SCRAPE: {
-        LINKEDINSCRAPE: "/api/scrape/scrape"
+        LINKEDINSCRAPE: "/api/scrape/scrapeLinkedInProfiles",
+        JOBDESCRIPTION: "/api/scrape/scrapeJobDescription"
+    },
+    AI: {
+        GETREFERRALTEXT: "/api/ai/getReferralText",
+        GETSIMILARITYSCORE: "/api/ai/getSimilarityScore"
     }
 };
 

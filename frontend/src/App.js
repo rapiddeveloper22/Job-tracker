@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ApplicationProvider } from './context/ApplicationContext';
+import { SpeedInsights } from "@vercel/speed-insights/react"
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
@@ -41,6 +42,7 @@ const App = () => {
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" />} />
+
       </Routes>
     </Router>
   );

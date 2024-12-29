@@ -30,7 +30,6 @@ app.use(bodyParser.json());
 
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.url}`);
-    console.log('Headers:', req.headers);
     next();
 });
 
@@ -47,11 +46,13 @@ mongoose.connect('mongodb+srv://mmaswin22:bRTITTtZXOIH8Op4@cluster0.malig.mongod
 const authRoutes = require('./routes/auth');
 const applicationRoutes = require('./routes/applications');
 const scrapeRoutes = require('./routes/scrape');
+const aiRoutes = require('./routes/ai');
 
 // Routes
 app.use('/api/auth', authRoutes); // Authentication routes
 app.use('/api/app', applicationRoutes); // Application-related routes
 app.use('/api/scrape', scrapeRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Server Start
 const PORT = 3000;
