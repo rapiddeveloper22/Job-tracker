@@ -1,8 +1,10 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+import NavigationBar from '../components/NavigationBar';
+import Footer from '../components/Footer';
 import JobDetails from '../components/JobDetails';
 import LinkedInProfiles from '../components/LinkedInProfiles';
-import ResumeUpload from '../components/ResumeUpload';
+import JobFitAnalyzer from '../components/JobFitAnalyzer';
 
 const ApplicationDetails = () => {
     const location = useLocation();
@@ -16,6 +18,7 @@ const ApplicationDetails = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-black to-indigo-800">
+            <NavigationBar />
             <div className="max-w-screen-xl mx-auto px-6 py-12">
                 {/* Header Section */}
                 <div className="text-center space-y-4 mb-12">
@@ -30,8 +33,9 @@ const ApplicationDetails = () => {
                 <LinkedInProfiles appId={application?._id} query={query} />
 
                 {/* Resume Upload Section */}
-                <ResumeUpload jobLink={application?.job_link} />
+                <JobFitAnalyzer jobLink={application?.job_link} />
             </div>
+            <Footer />
         </div>
     );
 };

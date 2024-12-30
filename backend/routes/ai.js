@@ -15,6 +15,45 @@ const upload = multer({ storage: storage });
 const GEMINI_API_KEY = 'AIzaSyCRTW69xL9c7Ht8Wo7MwN5Fk6UupDQalEU'; // Replace with your actual API key
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
+const queryGemini = async (prompt) => {
+    try {
+        const url = GEMINI_API_URL;
+
+        const requestBody = JSON.stringify({
+            contents: [
+                {
+                    parts: [{ text: prompt }], // Assuming this is the correct structure
+                },
+            ],
+        });
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: requestBody,
+        });
+
+        if (!response.ok) {
+            throw new Error(`Gemini API request failed with status ${response.status}: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        // Safely access the similarity score from the response
+        const candidates = result?.candidates;
+        if (Array.isArray(candidates) && candidates[0]?.content?.parts?.[0]?.text) {
+            return candidates[0].content.parts[0].text.trim(); // Return the similarity score or content
+        } else {
+            throw new Error("Invalid response format from Gemini API.");
+        }
+    } catch (error) {
+        console.error("Error querying Gemini API:", error);
+        throw error; // Propagate the error to the caller for handling
+    }
+}
+
 // Helper function to extract text from a PDF
 const extractTextFromPDF = async (pdfBuffer) => {
     try {
@@ -43,9 +82,6 @@ const extractTextFromDOCX = async (docxBuffer) => {
 router.post('/getSimilarityScore', upload.single('resume'), authenticate, async (req, res) => {
     const { jobDescription } = req.body;
     const resumeFile = req.file;
-
-    console.log('Buffer:', req.file.buffer);
-    console.log(resumeFile);
 
     if (!jobDescription || !resumeFile) {
         return res.status(400).json({ error: 'Both job description and resume are required.' });
@@ -78,46 +114,6 @@ router.post('/getSimilarityScore', upload.single('resume'), authenticate, async 
     Please provide the similarity score based on the relevance of the resume to the job description first then provide the reason for the same as well. The format should be like Similarity score: (Calculated score) Reason: (Found reasons)
     `;
 
-    async function queryGemini(prompt) {
-        try {
-            const url = GEMINI_API_URL;
-
-            const requestBody = JSON.stringify({
-                contents: [
-                    {
-                        parts: [{ text: prompt }], // Assuming this is the correct structure
-                    },
-                ],
-            });
-
-            const response = await fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: requestBody,
-            });
-
-            if (!response.ok) {
-                throw new Error(`Gemini API request failed with status ${response.status}: ${response.statusText}`);
-            }
-
-            const result = await response.json();
-
-            // Safely access the similarity score from the response
-            const candidates = result?.candidates;
-            if (Array.isArray(candidates) && candidates[0]?.content?.parts?.[0]?.text) {
-                return candidates[0].content.parts[0].text.trim(); // Return the similarity score or content
-            } else {
-                throw new Error("Invalid response format from Gemini API.");
-            }
-        } catch (error) {
-            console.error("Error querying Gemini API:", error);
-            throw error; // Propagate the error to the caller for handling
-        }
-    }
-
-
     // Inside your main route handler:
     try {
         const responseContent = await queryGemini(prompt);
@@ -146,6 +142,68 @@ router.post('/getSimilarityScore', upload.single('resume'), authenticate, async 
     }
 
 
+});
+
+router.post('/getReferralText', upload.single('resume'), authenticate, async (req, res) => {
+    const { jobDescription } = req.body;
+    const resumeFile = req.file;
+    console.log(resumeFile);
+
+    if (!jobDescription || !resumeFile) {
+        return res.status(400).json({ error: 'Job description and resume are required.' });
+    }
+
+    // Extract text from the resume file based on its type
+    let resumeText = '';
+    try {
+        if (resumeFile.mimetype === 'application/pdf') {
+            resumeText = await extractTextFromPDF(resumeFile.buffer);
+        } else if (resumeFile.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+            resumeText = await extractTextFromDOCX(resumeFile.buffer);
+        } else {
+            return res.status(400).json({ error: 'Unsupported resume file format. Please upload a PDF or DOCX file.' });
+        }
+    } catch (error) {
+        return res.status(500).json({ error: `Error extracting text from resume: ${error.message}` });
+    }
+
+    try {
+        // Prompt for the AI to generate a referral message
+        const prompt = `
+        Assume the user is a job seeker applying for the role described below. Using their resume content and the job description, 
+        create a professional self-referral message they can send to someone in the company to request a referral.
+        The message should be polite, concise, and emphasize why they are a strong fit for the role.
+
+        Include the following in the message:
+        - A professional introduction.
+        - Brief mention of the user's skills and achievements from the resume.
+        - An explanation of how these align with the job description.
+        - A request for the referral.
+
+        Job Description:
+        ${jobDescription}
+
+        Candidate Resume:
+        ${resumeText}
+
+        Referral Message:
+        `;
+
+        // Use queryGemini to get the AI-generated referral message
+        const referralMessage = await queryGemini(prompt);
+
+        if (!referralMessage) {
+            throw new Error('Failed to generate referral message.');
+        }
+
+        console.log(referralMessage);
+
+        // Respond with the referral message
+        res.json({ referralMessage });
+    } catch (error) {
+        console.error('Error generating referral message:', error);
+        res.status(500).json({ error: 'An error occurred while generating the referral message.' });
+    }
 });
 
 module.exports = router;

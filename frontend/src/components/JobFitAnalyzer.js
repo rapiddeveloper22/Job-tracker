@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'; // Animation library
 import { AiOutlineLoading3Quarters, AiFillCaretDown, AiFillCaretUp } from 'react-icons/ai'; // Icons
 import API_CONFIG from '../apiConfig';
 
-const ResumeUpload = ({ jobLink }) => {
+const JobFitAnalyzer = ({ jobLink }) => {
     const [resume, setResume] = useState(null);
     const [jobDescription, setJobDescription] = useState('');
     const [similarityScore, setSimilarityScore] = useState(null);
@@ -12,6 +12,8 @@ const ResumeUpload = ({ jobLink }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(true); // Default collapsed
+    const [referralMessage, setReferralMessage] = useState('');
+    const [isCopying, setIsCopying] = useState(false);
 
     useEffect(() => {
         if (jobLink) {
@@ -23,6 +25,39 @@ const ResumeUpload = ({ jobLink }) => {
         const file = event.target.files[0];
         if (file) {
             setResume(file);
+        }
+    };
+
+    const handleCopyReferral = () => {
+        navigator.clipboard.writeText(referralMessage).then(() => {
+            setIsCopying(true);
+            setTimeout(() => setIsCopying(false), 2000);
+        });
+    };
+
+    const fetchReferralMessage = async (resume) => {
+        try {
+            const formData = new FormData();
+            formData.append('resume', resume);
+            formData.append('jobDescription', jobDescription);
+
+            const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.AI.GETREFERRALTEXT}`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                },
+            });
+
+            const data = await response.json();
+            console.log(data);
+            if (data.referralMessage) {
+                setReferralMessage(data.referralMessage);
+            } else {
+                console.error('Failed to generate referral message.');
+            }
+        } catch (error) {
+            console.error('Error fetching referral message:', error);
         }
     };
 
@@ -85,6 +120,10 @@ const ResumeUpload = ({ jobLink }) => {
             if (data.similarityScore && data.scoreReason) {
                 setSimilarityScore(data.similarityScore);
                 setScoreReason(data.scoreReason);
+
+                if (data.similarityScore >= 75) {
+                    fetchReferralMessage(resume);
+                }
             } else {
                 alert('Failed to submit resume. Please try again.');
             }
@@ -248,10 +287,25 @@ const ResumeUpload = ({ jobLink }) => {
                         <h4 className="text-xl font-semibold text-blue-200">Analysis:</h4>
                         <ul className="space-y-2">{formatScoreReason(scoreReason)}</ul>
                     </div>
+
+                    {similarityScore >= 75 && referralMessage && (
+                        <div className="mt-6 bg-gray-700 p-4 rounded-md">
+                            <h4 className="text-lg font-semibold text-blue-300 mb-2">
+                                Referral Message:
+                            </h4>
+                            <p className="text-white">{formatScoreReason(referralMessage)}</p>
+                            <button
+                                onClick={handleCopyReferral}
+                                className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                            >
+                                {isCopying ? 'Copied!' : 'Copy Message'}
+                            </button>
+                        </div>
+                    )}
                 </motion.div>
             )}
         </motion.div>
     );
 };
 
-export default ResumeUpload;
+export default JobFitAnalyzer;
