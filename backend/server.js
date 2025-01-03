@@ -6,11 +6,11 @@ const bodyParser = require('body-parser');
 const app = express();
 
 // Middleware
-const allowedOrigins = [
-    'https://jobossy.vercel.app',  // Frontend URL 1
-    'https://www.jobossy.xyz', // Frontend URL 2
-    'http://localhost:3001'  // Localhost URL for local testing (adjust the port if needed)
-];
+// const allowedOrigins = [
+//     'https://jobossy.vercel.app',  // Frontend URL 1
+//     'https://www.jobossy.xyz', // Frontend URL 2
+//     'http://localhost:3001'  // Localhost URL for local testing (adjust the port if needed)
+// ];
 
 app.use(cors({
     origin: '*',
@@ -19,12 +19,12 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-app.options('*', (req, res) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.sendStatus(200);
-}); // Enable CORS for preflight requests
+// app.options('*', (req, res) => {
+//     res.header('Access-Control-Allow-Origin', '*');
+//     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+//     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+//     res.sendStatus(200);
+// }); // Enable CORS for preflight requests
 
 app.use(bodyParser.json());
 
