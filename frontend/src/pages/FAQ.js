@@ -8,8 +8,8 @@ import Footer from "../components/Footer";
 const FAQ = () => {
     const faqs = [
         {
-            question: "What is Automatic Job Tracker?",
-            answer: "Automatic Job Tracker simplifies your job application process. It helps you track applications and even auto-applies to jobs to save your time and effort.",
+            question: "What is Jobossy?",
+            answer: "Jobossy simplifies your job application process. It helps you track applications and even auto-applies to jobs to save your time and effort.",
             icon: faQuestionCircle,
             color: "text-teal-500",
         },

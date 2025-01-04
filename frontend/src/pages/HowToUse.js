@@ -75,7 +75,7 @@ const HowToUse = () => {
                                 </h3>
                                 <p>
                                     Track your applications and gain insights into your job search journey by visiting {" "}
-                                    <a href="https://job-tracker-3fgd.onrender.com/dashboard"
+                                    <a href="https://www.jobossy.xyz"
                                         className="text-yellow-400 hover:underline"
                                         target="_blank"
                                         rel="noopener noreferrer">

@@ -1,6 +1,6 @@
 const API_CONFIG = {
-    // BASE_URL: "https://job-tracker-production-e381.up.railway.app",
-    BASE_URL: "http://localhost:3000",
+    BASE_URL: "https://job-tracker-production-e381.up.railway.app",
+    // BASE_URL: "http://localhost:3000",
     AUTH: {
         LOGIN: "/api/auth/login",
         SIGNUP: "/api/auth/signup",
@@ -8,7 +8,7 @@ const API_CONFIG = {
     APPLICATION: {
         GET_ALL: "/api/app/getAll",
         CREATE: "/api/app/create",
-        UPDATE: "/api/app/update",
+        UPDATE: "/api/app/updateApplication",
         DELETE: "/api/app/delete",
         APPLY: "/api/app/apply",
     },
@@ -18,7 +18,8 @@ const API_CONFIG = {
     },
     AI: {
         GETREFERRALTEXT: "/api/ai/getReferralText",
-        GETSIMILARITYSCORE: "/api/ai/getSimilarityScore"
+        GETSIMILARITYSCORE: "/api/ai/getSimilarityScore",
+        EXTENSIONCALL: "api/ai/extensionCall"
     }
 };
 

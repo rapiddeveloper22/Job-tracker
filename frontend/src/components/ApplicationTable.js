@@ -6,7 +6,6 @@ import * as XLSX from 'xlsx';
 import API_CONFIG from '../apiConfig';
 
 const ApplicationTable = ({ applications, onSort, sortBy, sortOrder, onPageLoad, updateApplication }) => {
-    const GOOGLE_API_KEY = "AIzaSyDViSkkMRFM8SMDg-gA0_Aefjy6YfQkeF0";
     const userEmail = localStorage.getItem('userEmail');
     const authToken = localStorage.getItem('authToken');
 

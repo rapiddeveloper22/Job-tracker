@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion'; // For animations
 import { AiFillCaretDown, AiFillCaretUp } from 'react-icons/ai'; // Collapse icons
+import API_CONFIG from '../apiConfig';
 
 const JobDetails = ({ application }) => {
     const [isCollapsed, setIsCollapsed] = useState(false); // For collapsing the section

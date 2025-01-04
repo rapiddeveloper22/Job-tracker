@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { gapi } from 'gapi-script';
+import API_CONFIG from '../apiConfig';
 
-const CLIENT_ID = '505792993495-s0fuo4pilb8k9u2tj0u3ggv75os3vjl1.apps.googleusercontent.com';
-const API_KEY = 'AIzaSyDViSkkMRFM8SMDg-gA0_Aefjy6YfQkeF0';
-const SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
-const GEMINI_API_KEY = 'AIzaSyCRTW69xL9c7Ht8Wo7MwN5Fk6UupDQalEU';
+const CLIENT_ID = process.env.CLIENT_ID
+const API_KEY = process.env.API_KEY;
+const SCOPES = process.env.SCOPES;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 const GmailPopup = ({ isConnected, onConnect, onClose }) => {
     const [emails, setEmails] = useState([]);
@@ -25,38 +26,6 @@ const GmailPopup = ({ isConnected, onConnect, onClose }) => {
         } catch (error) {
             console.error("Failed to parse JSON:", error);
             return null;
-        }
-    }
-
-    async function queryGemini(email) {
-        try {
-            const prompt = `You are an assistant that extracts job application details from email content. Check if the email is about a job application, if yes then return a JSON object with: - "company": the company name, - "role_name": the job role mentioned, - "application_submitted": true as string if it seems like an application was submitted. If its not about a job application, return NA for all fields. Give all the values as string. Text: ${email}`;
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-            const data = JSON.stringify({
-                contents: [
-                    {
-                        parts: [{ text: prompt }],
-                    },
-                ],
-            });
-
-            const response = await fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: data,
-            });
-
-            if (!response.ok) {
-                throw new Error(`Gemini API request failed: ${response.statusText}`);
-            }
-
-            const result = await response.json();
-            return result.candidates[0].content.parts[0].text;
-        } catch (error) {
-            console.error("Error querying Gemini API:", error);
-            return "Error querying API";
         }
     }
 
@@ -149,14 +118,23 @@ const GmailPopup = ({ isConnected, onConnect, onClose }) => {
                     body = atob(message.result.payload.body.data.replace(/-/g, '+').replace(/_/g, '/'));
                 }
 
-                const geminiResult = await queryGemini(body);
+                var apiCall = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.AI.EXTENSIONCALL}`, {
+                    method: "POST",
+                    body: JSON.stringify({ bodyText: escapeTextForJSON(bodyText) }),
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8",
+                        "Authorization": `Bearer ${response.authToken}`,
+                    }
+                })
+
+                const geminiResult = await apiCall.json();
                 const result = extractJSON(geminiResult);
                 result.user_email = localStorage.getItem("userEmail");
                 result.current_date = date;
                 result.is_careers_page = 'Yes';
                 console.log('Gemini Result for Email:', result);
 
-                fetch("https://job-tracker-production-e381.up.railway.app/api/app/apply", {
+                fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.APPLICATION.APPLY}`, {
                     method: "POST",
                     body: JSON.stringify(result),
                     headers: {

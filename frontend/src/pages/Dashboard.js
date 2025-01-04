@@ -175,7 +175,7 @@ const Dashboard = () => {
     const updateApplication = async (id, updatedFields) => {
         console.log(updatedFields);
         try {
-            const response = await fetch(`${API_CONFIG.BASE_URL}/api/app/updateApplication`, {
+            const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.APPLICATION.UPDATE}`, {
                 method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${authToken}`,
