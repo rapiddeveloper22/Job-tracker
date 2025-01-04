@@ -1,6 +1,5 @@
 var debounceTimer = null;
 var lastScrapedData = "";
-const GEMINI_API_KEY = "AIzaSyCRTW69xL9c7Ht8Wo7MwN5Fk6UupDQalEU";
 
 // Wait for changes with debounce
 function waitForContentChangeWithDebounce(selector, timeout = 3000) {
@@ -87,7 +86,8 @@ function waitForPageLoad() {
 // Function to clean up and extract JSON from wrapped string
 function extractJSON(rawResponse) {
     try {
-        const cleanedString = rawResponse.replace(/```[a-z]*\n|```/g, "").trim();
+        // const cleanedString = rawResponse.replace(/```[a-z]*\n|```/g, "").trim();
+        const cleanedString = rawResponse.replace(/```json\n|```/g, '').trim();
         return JSON.parse(cleanedString);
     } catch (error) {
         console.error("Failed to parse JSON:", error);
@@ -95,37 +95,12 @@ function extractJSON(rawResponse) {
     }
 }
 
-// Checking whether the user has applied for the job
-async function queryGemini(prompt) {
-    try {
-        const url =
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-        const data = JSON.stringify({
-            contents: [
-                {
-                    parts: [{ text: prompt }],
-                },
-            ],
-        });
-
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: data,
-        });
-
-        if (!response.ok) {
-            throw new Error(`Gemini API request failed: ${response.statusText}`);
-        }
-
-        const result = await response.json();
-        return result.candidates[0].content.parts[0].text;
-    } catch (error) {
-        console.error("Error querying Gemini API:", error);
-        return "Error querying API";
-    }
+function escapeTextForJSON(text) {
+    return text
+        .replace(/\\/g, '\\\\')     // Escape backslashes
+        .replace(/"/g, '\\"')       // Escape double quotes
+        .replace(/\n/g, '\\n')      // Escape newlines
+        .replace(/\r/g, '\\r');     // Escape carriage returns
 }
 
 // Scrape and process logic
@@ -142,70 +117,74 @@ async function scrapeAndProcess() {
         }
 
         console.log("Scraped content:", bodyText);
+        var applicationCheck;
 
-        const prompt = `So basically the paragraph below is a scraped content of a webpage. Analyse the contents of the webpage and check whether the page is a careers page of a company or a normal website. If more than 2 job descriptions are present then return NA. If it is not a careers webpage then return NA as result if it is a careers webpage then do the following. You need to find 3 things here. 1. What is the company which the user is applying for?  2. Does this paragraph contain anything about the role name which the user is applying. If role name is present then reply the role name or else with 'No'  3. Does this paragraph contain anything that the user has submitted an application? Reply with 'Yes' or 'No'. Return them in JSON format with keys is_careers_page, company, role_name, application_submitted. Text: ${bodyText}. Give it in JSON format with all the keys as string`;
+        chrome.runtime.sendMessage({ action: "checkLoginStatus" }, async (response) => {
+            console.log(JSON.stringify(bodyText));
+            if (response && response.authToken) {
+                var applicationCheckCall = await fetch("https://job-tracker-production-e381.up.railway.app/api/ai/extensionCall", {
+                    method: "POST",
+                    body: JSON.stringify({ bodyText: escapeTextForJSON(bodyText) }),
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8",
+                        "Authorization": `Bearer ${response.authToken}`,
+                    }
+                })
+            }
 
-        const applicationCheck = await queryGemini(prompt);
-        console.log(applicationCheck);
+            applicationCheck = await applicationCheckCall.json();
+            // applicationCheck = escapeTextForJSON(applicationCheck);
+            console.log(applicationCheck);
 
-        // Further processing
-        const result = extractJSON(applicationCheck);
+            // Further processing
+            const result = extractJSON(applicationCheck.applicationCheck);
+            console.log(result);
 
-        if (!result) {
-            console.error("Failed to process Gemini response");
-            return;
-        }
+            if (!result) {
+                console.error("Failed to process Gemini response");
+                return;
+            }
 
-        const currentDate = new Date();
-        const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getFullYear()}`;
-        result.current_date = formattedDate;
-        result.job_link = window.location.href;
+            const currentDate = new Date();
+            const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getFullYear()}`;
+            result.current_date = formattedDate;
+            result.job_link = window.location.href;
 
-        console.log("Processed result:", result);
+            console.log("Processed result:", result);
 
-        var isRoleNamePresent = result.role_name && (result.role_name.toLowerCase() != "no" && result.role_name.toLowerCase() != "na");
+            var isRoleNamePresent = result.role_name && (result.role_name.toLowerCase() != "no" && result.role_name.toLowerCase() != "na");
 
-        if (result.is_careers_page && ((result.is_careers_page).toLowerCase() === "true" || (result.is_careers_page).toLowerCase() === "yes") && isRoleNamePresent) {
-            console.log("Careers page detected. Proceeding with further processing...");
+            if (result.is_careers_page && ((result.is_careers_page).toLowerCase() === "true" || (result.is_careers_page).toLowerCase() === "yes") && isRoleNamePresent) {
+                console.log("Careers page detected. Proceeding with further processing...");
 
-            // Detect form fields on the page
-            const formFields = detectFormFields();
-            console.log("Detected form fields:", formFields);
+                // Detect form fields on the page
+                const formFields = detectFormFields();
+                console.log("Detected form fields:", formFields);
 
-            // Send detected fields to Gemini for relevance analysis
-            const formFieldsPrompt = `Here are the form fields detected on a job application page. Please determine if they are relevant for applying to the job or not. Return in JSON format with field names which are relevant. Fields: ${JSON.stringify(formFields, null, 2)}`;
+                chrome.runtime.sendMessage({ action: "checkLoginStatus" }, (response) => {
+                    if (response && response.authToken) {
+                        result.user_email = response.userEmail;
 
-            const relevanceCheck = await queryGemini(formFieldsPrompt);
-            const relevanceResult = extractJSON(relevanceCheck);
+                        console.log("Before API call");
+                        console.log(result);
 
-            console.log("Relevance Check Result:", relevanceResult);
-
-            // Combine both the job details and form field relevance into one result object
-            // result.form_fields_relevance = relevanceResult;
-
-            chrome.runtime.sendMessage({ action: "checkLoginStatus" }, (response) => {
-                if (response && response.authToken) {
-                    result.user_email = response.userEmail;
-
-                    console.log("Before API call");
-                    console.log(result);
-
-                    fetch("https://job-tracker-production-e381.up.railway.app/api/app/apply", {
-                        method: "POST",
-                        body: JSON.stringify(result),
-                        headers: {
-                            "Content-type": "application/json; charset=UTF-8",
-                            "Authorization": `Bearer ${response.authToken}`,
-                        }
-                    })
-                        .then(response => response.json())
-                        .then(json => console.log(json))
-                        .catch(error => console.error("Error submitting application:", error));
-                } else {
-                    console.log("User not logged in. Skipping backend submission.");
-                }
-            });
-        }
+                        fetch("https://job-tracker-production-e381.up.railway.app/api/app/apply", {
+                            method: "POST",
+                            body: JSON.stringify(result),
+                            headers: {
+                                "Content-type": "application/json; charset=UTF-8",
+                                "Authorization": `Bearer ${response.authToken}`,
+                            }
+                        })
+                            .then(response => response.json())
+                            .then(json => console.log(json))
+                            .catch(error => console.error("Error submitting application:", error));
+                    } else {
+                        console.log("User not logged in. Skipping backend submission.");
+                    }
+                });
+            }
+        });
     } catch (error) {
         console.error("Error while scraping or processing:", error);
     }

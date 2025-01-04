@@ -9,6 +9,8 @@ const router = express.Router();
 router.post('/scrapeLinkedInProfiles', authenticate, async (req, res) => {
     const { query } = req.body;
 
+    console.log(query);
+
     if (!query) {
         return res.status(400).json({ error: 'Query is required' });
     }
@@ -74,6 +76,7 @@ router.post('/scrapeLinkedInProfiles', authenticate, async (req, res) => {
 
 router.post('/scrapeJobDescription', authenticate, async (req, res) => {
     const { url } = req.body;
+    console.log(url);
 
     if (!url) {
         return res.status(400).json({ error: 'Job link is required.' });

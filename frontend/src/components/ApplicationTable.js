@@ -159,11 +159,11 @@ const ApplicationTable = ({ applications, onSort, sortBy, sortOrder, onPageLoad,
                                             ref={isLastRow ? lastRowRef : null}
                                             key={app._id}
                                             className="hover:bg-gray-700 transition duration-300 ease-in-out cursor-pointer"
-                                            onClick={() => handleRowClick(app)}
+                                        // onClick={() => handleRowClick(app)}
                                         >
-                                            <td className="p-4">{app.company}</td>
-                                            <td className="p-4">{app.role_name}</td>
-                                            <td className="p-4">{app.current_date}</td>
+                                            <td className="p-4" onClick={() => handleRowClick(app)}>{app.company}</td>
+                                            <td className="p-4" onClick={() => handleRowClick(app)}>{app.role_name}</td>
+                                            <td className="p-4" onClick={() => handleRowClick(app)}>{app.current_date}</td>
                                             <td className="p-4 flex items-center">
                                                 {app.tags && app.tags.length > 0 ? (
                                                     <div className="flex flex-wrap gap-2">

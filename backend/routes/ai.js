@@ -206,4 +206,35 @@ router.post('/getReferralText', upload.single('resume'), authenticate, async (re
     }
 });
 
+router.post('/extensionCall', authenticate, async (req, res) => {
+    console.log("Inside extension call");
+    const { bodyText } = req.body;
+
+    console.log(bodyText);
+
+    if (!bodyText) {
+        return res.status(400).json({ error: 'Text from extension is required.' });
+    }
+
+    try {
+        // Prompt for the AI to generate a referral message
+        const prompt = `So basically the paragraph below is a scraped content of a webpage. Analyse the contents of the webpage and check whether the page is a careers page of a company or a normal website. If more than 2 job descriptions are present then return NA. If it is not a careers webpage then return NA as result if it is a careers webpage then do the following. You need to find 3 things here. 1. What is the company which the user is applying for?  2. Does this paragraph contain anything about the role name which the user is applying. If role name is present then reply the role name or else with 'No'  3. Does this paragraph contain anything that the user has submitted an application? Reply with 'Yes' or 'No'. Return them in JSON format with keys is_careers_page, company, role_name, application_submitted. Text: ${bodyText}. Give it in JSON format with all the keys as string`;
+
+        // Use queryGemini to get the AI-generated referral message
+        const applicationCheck = await queryGemini(prompt);
+
+        if (!applicationCheck) {
+            throw new Error('Failed to generate application check.');
+        }
+
+        console.log(applicationCheck);
+
+        // Respond with the referral message
+        res.json({ applicationCheck });
+    } catch (error) {
+        console.error('Error generating referral message:', error);
+        res.status(500).json({ error: 'An error occurred while generating the referral message.' });
+    }
+});
+
 module.exports = router;

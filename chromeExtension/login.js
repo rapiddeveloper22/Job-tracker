@@ -15,6 +15,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
         const data = await response.json();
         if (response.ok) {
+            console.log(data);
             // Save the JWT token to localStorage
             chrome.storage.local.set({ authToken: data.token, userEmail: email }, function () {
                 if (chrome.runtime.lastError) {
