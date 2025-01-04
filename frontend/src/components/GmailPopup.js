@@ -120,7 +120,7 @@ const GmailPopup = ({ isConnected, onConnect, onClose }) => {
 
                 var apiCall = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.AI.EXTENSIONCALL}`, {
                     method: "POST",
-                    body: JSON.stringify({ bodyText: escapeTextForJSON(bodyText) }),
+                    body: JSON.stringify({ bodyText: body }),
                     headers: {
                         "Content-type": "application/json; charset=UTF-8",
                         "Authorization": `Bearer ${response.authToken}`,
