@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { gapi } from 'gapi-script';
 import API_CONFIG from '../apiConfig';
 
-const CLIENT_ID = process.env.CLIENT_ID
-const API_KEY = process.env.API_KEY;
-const SCOPES = process.env.SCOPES;
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const CLIENT_ID = process.env.REACT_APP_CLIENT_ID
+const API_KEY = process.env.REACT_APP_API_KEY;
+const SCOPES = process.env.REACT_APP_SCOPES;
 
 const GmailPopup = ({ isConnected, onConnect, onClose }) => {
     const [emails, setEmails] = useState([]);
@@ -39,7 +38,10 @@ const GmailPopup = ({ isConnected, onConnect, onClose }) => {
                     scope: SCOPES,
                 });
 
+                console.log(process.env);
+                console.log(API_KEY + " " + API_CONFIG + " " + SCOPES);
                 const authInstance = gapi.auth2.getAuthInstance();
+                console.log(authInstance);
                 const isSignedIn = authInstance.isSignedIn.get();
 
                 if (!isSignedIn) {
@@ -67,6 +69,7 @@ const GmailPopup = ({ isConnected, onConnect, onClose }) => {
                 });
 
                 const authInstance = gapi.auth2.getAuthInstance();
+                console.log(authInstance);
                 const isSignedIn = authInstance.isSignedIn.get();
 
                 if (isSignedIn) {
