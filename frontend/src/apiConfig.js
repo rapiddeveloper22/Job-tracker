@@ -19,7 +19,7 @@ const API_CONFIG = {
     AI: {
         GETREFERRALTEXT: "/api/ai/getReferralText",
         GETSIMILARITYSCORE: "/api/ai/getSimilarityScore",
-        EXTENSIONCALL: "api/ai/extensionCall"
+        EXTENSIONCALL: "/api/ai/extensionCall"
     }
 };
 
