@@ -20,8 +20,8 @@ const GmailPopup = ({ isConnected, onConnect, onClose }) => {
 
     function extractJSON(rawResponse) {
         try {
-            console.log(rawResponse);
-            const cleanedString = rawResponse.replace(/```[a-z]*\n|```/g, "").trim();
+            console.log(rawResponse.applicationCheck);
+            const cleanedString = rawResponse.applicationCheck.replace(/```[a-z]*\n|```/g, "").trim();
             return JSON.parse(cleanedString);
         } catch (error) {
             console.error("Failed to parse JSON:", error);
