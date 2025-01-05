@@ -93,7 +93,7 @@ const HowToUse = () => {
                         Ready to Simplify Your Job Search?
                     </h2>
                     <a
-                        href="https://chromewebstore.google.com/detail/automatic-job-tracker/ikbklofpkopbljohhajgiohhkpcdfege" // Replace with your extension link
+                        href="https://chromewebstore.google.com/detail/jobossy/ikbklofpkopbljohhajgiohhkpcdfege"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
