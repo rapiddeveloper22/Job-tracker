@@ -87,6 +87,8 @@ const NavigationBar = () => {
                         onClick={() => {
                             // Logout function: Remove the authToken from localStorage
                             localStorage.removeItem('authToken');
+                            localStorage.removeItem('isGmailConnected');
+                            localStorage.removeItem('userEmail');
                         }}
                     >
                         <HiLogout className="mr-2 text-lg" /> {/* Logout Icon */}
