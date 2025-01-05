@@ -50,7 +50,6 @@ const JobFitAnalyzer = ({ jobLink }) => {
             });
 
             const data = await response.json();
-            console.log(data);
             if (data.referralMessage) {
                 setReferralMessage(data.referralMessage);
             } else {
@@ -114,8 +113,6 @@ const JobFitAnalyzer = ({ jobLink }) => {
             });
 
             const data = await response.json();
-
-            console.log(data);
 
             if (data.similarityScore && data.scoreReason) {
                 setSimilarityScore(data.similarityScore);

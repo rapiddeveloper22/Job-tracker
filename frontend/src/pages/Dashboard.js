@@ -173,7 +173,6 @@ const Dashboard = () => {
     };
 
     const updateApplication = async (id, updatedFields) => {
-        console.log(updatedFields);
         try {
             const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.APPLICATION.UPDATE}`, {
                 method: 'PUT',
@@ -205,14 +204,8 @@ const Dashboard = () => {
     const currentApps = filteredApplications.slice(indexOfFirstApp, indexOfLastApp);
 
     const handleGmailButtonClick = () => {
-        console.log(isGmailConnected);
-        // Check localStorage before showing the popup
-        // const gmailConnected = localStorage.getItem('isGmailConnected');
-        // console.log(gmailConnected);
         if (!isGmailConnected) {
-            console.log("Inside if condition");
             setShowGmailPopup(true);
-            console.log(showGmailPopup); // Show the Gmail popup if Gmail is not connected
         }
     };
 

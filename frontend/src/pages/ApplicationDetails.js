@@ -10,8 +10,6 @@ const ApplicationDetails = () => {
     const location = useLocation();
     const { application } = location.state || {};
 
-    console.log(application);
-
     const query = application
         ? `${application.role_name} at ${application.company}`
         : '';

@@ -20,7 +20,6 @@ const GmailPopup = ({ isConnected, onConnect, onClose }) => {
 
     function extractJSON(rawResponse) {
         try {
-            console.log(rawResponse.applicationCheck);
             const cleanedString = rawResponse.applicationCheck.replace(/```[a-z]*\n|```/g, "").trim();
             return JSON.parse(cleanedString);
         } catch (error) {
@@ -132,7 +131,6 @@ const GmailPopup = ({ isConnected, onConnect, onClose }) => {
                 result.user_email = localStorage.getItem("userEmail");
                 result.current_date = date;
                 result.is_careers_page = 'Yes';
-                console.log('Gemini Result for Email:', result);
 
                 fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.APPLICATION.APPLY}`, {
                     method: "POST",

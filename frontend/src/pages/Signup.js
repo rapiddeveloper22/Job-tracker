@@ -20,9 +20,7 @@ const Signup = () => {
             });
 
             const data = await response.json();
-            console.log(data);
             if (data.message) {
-                console.log(data);
                 localStorage.setItem('authToken', data.hashedPassword); // Save token on signup
                 localStorage.setItem('userEmail', email); // Save email on signup
                 navigate('/dashboard'); // Redirect to Dashboard page
