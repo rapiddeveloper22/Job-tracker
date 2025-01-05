@@ -38,10 +38,7 @@ const GmailPopup = ({ isConnected, onConnect, onClose }) => {
                     scope: SCOPES,
                 });
 
-                console.log(process.env);
-                console.log(API_KEY + " " + API_CONFIG + " " + SCOPES);
                 const authInstance = gapi.auth2.getAuthInstance();
-                console.log(authInstance);
                 const isSignedIn = authInstance.isSignedIn.get();
 
                 if (!isSignedIn) {
@@ -69,7 +66,6 @@ const GmailPopup = ({ isConnected, onConnect, onClose }) => {
                 });
 
                 const authInstance = gapi.auth2.getAuthInstance();
-                console.log(authInstance);
                 const isSignedIn = authInstance.isSignedIn.get();
 
                 if (isSignedIn) {
@@ -126,7 +122,7 @@ const GmailPopup = ({ isConnected, onConnect, onClose }) => {
                     body: JSON.stringify({ bodyText: body }),
                     headers: {
                         "Content-type": "application/json; charset=UTF-8",
-                        "Authorization": `Bearer ${response.authToken}`,
+                        "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
                     }
                 })
 
