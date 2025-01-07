@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API_CONFIG from '../apiConfig';
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import the eye icons
+import NavigationBar from '../components/NavigationBar';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -34,56 +35,62 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-900 text-gray-100 font-sans flex justify-center items-center">
-            <div className="bg-gray-800 p-8 rounded-lg shadow-xl w-full sm:w-96">
-                <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#ff0088] to-[#ff8800] text-center mb-8">
-                    Login
-                </h2>
-                <form onSubmit={handleLogin} className="space-y-6">
-                    <div>
-                        <input
-                            type="email"
-                            placeholder="Enter your email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            className="w-full p-4 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff0088]"
-                        />
-                    </div>
-                    <div className="relative">
-                        <input
-                            type={showPassword ? 'text' : 'password'} // Toggle between text and password type
-                            placeholder="Enter your password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            className="w-full p-4 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff0088]"
-                        />
-                        <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
-                            className="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-300"
-                        >
-                            {showPassword ? (
-                                <FaEyeSlash size={20} />
-                            ) : (
-                                <FaEye size={20} />
-                            )}
-                        </button>
-                    </div>
-                    <button
-                        type="submit"
-                        className="w-full py-3 rounded-lg bg-gradient-to-r from-[#ff0088] to-[#ff8800] text-white font-bold text-lg hover:opacity-90 transition"
-                    >
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-indigo-900 text-gray-100 font-sans flex flex-col">
+            {/* Navigation Bar */}
+            <NavigationBar />
+
+            {/* Login Form */}
+            <div className="flex-grow flex justify-center items-center p-4">
+                <div className="bg-gray-800 p-6 sm:p-8 rounded-lg shadow-xl w-full sm:w-96">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#ff0088] to-[#ff8800] text-center mb-6">
                         Login
-                    </button>
-                </form>
-                <p className="text-center text-gray-300 mt-4">
-                    Don't have an account?{' '}
-                    <button onClick={() => navigate('/signup')} className="text-[#ff0088] hover:text-[#ff8800]">
-                        Signup
-                    </button>
-                </p>
+                    </h2>
+                    <form onSubmit={handleLogin} className="space-y-4 sm:space-y-6">
+                        <div>
+                            <input
+                                type="email"
+                                placeholder="Enter your email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                                className="w-full p-3 sm:p-4 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff0088]"
+                            />
+                        </div>
+                        <div className="relative">
+                            <input
+                                type={showPassword ? 'text' : 'password'} // Toggle between text and password type
+                                placeholder="Enter your password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                className="w-full p-3 sm:p-4 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff0088]"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
+                                className="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-300"
+                            >
+                                {showPassword ? (
+                                    <FaEyeSlash size={18} />
+                                ) : (
+                                    <FaEye size={18} />
+                                )}
+                            </button>
+                        </div>
+                        <button
+                            type="submit"
+                            className="w-full py-2 sm:py-3 rounded-lg bg-gradient-to-r from-[#ff0088] to-[#ff8800] text-white font-bold text-lg hover:opacity-90 transition"
+                        >
+                            Login
+                        </button>
+                    </form>
+                    <p className="text-center text-gray-300 mt-4">
+                        Don't have an account?{' '}
+                        <button onClick={() => navigate('/signup')} className="text-[#ff0088] hover:text-[#ff8800]">
+                            Signup
+                        </button>
+                    </p>
+                </div>
             </div>
         </div>
     );

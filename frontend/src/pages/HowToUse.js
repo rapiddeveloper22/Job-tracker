@@ -1,18 +1,28 @@
 import React from "react";
 import { FaDownload, FaUserPlus, FaSearch, FaChartLine } from "react-icons/fa"; // Icons for steps
+import NavigationBar from "../components/NavigationBar"; // Importing NavigationBar component
+import Footer from "../components/Footer";
 
 const HowToUse = () => {
     return (
         <div className="min-h-screen text-gray-200">
+            {/* Navigation Bar */}
+            <NavigationBar />
+
             {/* Header */}
-            <header className="w-full bg-opacity-80 bg-black text-white py-6 px-12 shadow-lg fixed top-0 left-0 z-50">
+            {/* <header className="w-full bg-opacity-80 bg-black text-white py-6 px-12 shadow-lg">
                 <h1 className="text-4xl font-extrabold tracking-wide text-center bg-gradient-to-r from-orange-500 to-pink-500 text-transparent bg-clip-text">
-                    How To Use Job Tracker
+                    How To Use Jobossy
                 </h1>
-            </header>
+            </header> */}
 
             {/* Main Content */}
-            <main className="px-6 py-12 max-w-6xl mx-auto pt-24 space-y-16">
+            <main className="px-6 py-12 max-w-6xl mx-auto space-y-16"> {/* Adjusted margin-top */}
+                <div className="w-full bg-opacity-80 bg-black text-white py-6 px-12 shadow-lg">
+                    <h1 className="text-4xl font-extrabold tracking-wide text-center bg-gradient-to-r from-orange-500 to-pink-500 text-transparent bg-clip-text">
+                        How To Use Jobossy
+                    </h1>
+                </div>
                 {/* Getting Started Section */}
                 <section>
                     <h2 className="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-orange-500 to-pink-500 text-transparent bg-clip-text">
@@ -29,7 +39,7 @@ const HowToUse = () => {
                                     Step 1: Install Extension
                                 </h3>
                                 <p className="text-gray-300">
-                                    Download the Job Tracker extension from the Chrome Web Store.
+                                    Download the Jobossy extension from the Chrome Web Store.
                                 </p>
                             </div>
                         </div>
@@ -75,7 +85,8 @@ const HowToUse = () => {
                                 </h3>
                                 <p>
                                     Track your applications and gain insights into your job search journey by visiting {" "}
-                                    <a href="https://www.jobossy.xyz"
+                                    <a
+                                        href="https://www.jobossy.xyz"
                                         className="text-yellow-400 hover:underline"
                                         target="_blank"
                                         rel="noopener noreferrer">
@@ -98,7 +109,7 @@ const HowToUse = () => {
                         rel="noopener noreferrer"
                     >
                         <button className="px-8 py-3 font-semibold text-lg bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-full shadow-lg hover:scale-105 transition-transform">
-                            Install Job Tracker Now
+                            Install Jobossy Now
                         </button>
                     </a>
                 </section>
@@ -107,7 +118,7 @@ const HowToUse = () => {
             {/* Footer */}
             <footer className="bg-black text-gray-400 py-8 text-center">
                 <p>
-                    Need help? Contact us at
+                    Need help? Contact us at{" "}
                     <a
                         href="mailto:autojobtracker@gmail.com"
                         className="text-teal-400 hover:underline"
@@ -116,7 +127,9 @@ const HowToUse = () => {
                     </a>
                 </p>
             </footer>
-        </div >
+
+            <Footer />
+        </div>
     );
 };
 
