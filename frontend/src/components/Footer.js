@@ -53,7 +53,7 @@ const Footer = () => {
 
                 {/* Footer Bottom (Copyright Section) */}
                 <div className="mt-8 border-t border-gray-600 pt-4 text-center text-sm text-gray-400">
-                    <p>&copy; 2024 Jobossy. All rights reserved.</p>
+                    <p>&copy; 2025 Jobossy. All rights reserved.</p>
                 </div>
 
                 {/* Optional: A small note about the team */}
