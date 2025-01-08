@@ -71,7 +71,7 @@ const AboutUsPage = () => {
                 start: "top 80%",
                 toggleActions: "play none none none",
                 scrub: 1,  // This makes the color change follow the scroll position
-                markers: true  // Optional for debugging
+                // markers: true  // Optional for debugging
             }
         });
 
@@ -105,7 +105,7 @@ const AboutUsPage = () => {
                 start: "top 80%",
                 toggleActions: "play none none none",
                 scrub: 1,  // Scroll-based color transition
-                markers: true  // Optional for debugging
+                // markers: true  // Optional for debugging
             }
         });
 
