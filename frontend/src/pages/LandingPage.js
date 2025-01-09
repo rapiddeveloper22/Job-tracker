@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
@@ -19,8 +19,8 @@ const LandingPage = () => {
         // Set up animations
         const timeline = gsap.timeline();
 
-        timeline.fromTo(".hero-content h1", { opacity: 0, y: -50 }, { opacity: 1, y: 0, duration: 1, ease: "power2.out" })
-            .fromTo(".hero-content p", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, delay: 0.5, ease: "power2.out" });
+        timeline.fromTo(".hero-content h1", { opacity: 0, y: -50 }, { opacity: 1, y: 0, duration: 0.75, ease: "power2.out" })
+            .fromTo(".hero-content p", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.75, delay: 0.5, ease: "power2.out" });
 
         gsap.set(".feature-card, .testimonial-card, .future-features-card", { opacity: 1 });
 
@@ -28,7 +28,7 @@ const LandingPage = () => {
             ".feature-card",
             { opacity: 0, y: 50 },
             {
-                opacity: 1, y: 0, duration: 1.5, stagger: 0.3,
+                opacity: 1, y: 0, duration: 1, stagger: 0.3,
                 scrollTrigger: {
                     trigger: ".features-section",
                     start: "top 80%",
@@ -41,7 +41,7 @@ const LandingPage = () => {
             ".testimonial-card",
             { opacity: 0, y: 50 },
             {
-                opacity: 1, y: 0, duration: 1.5, stagger: 0.3,
+                opacity: 1, y: 0, duration: 1, stagger: 0.3,
                 scrollTrigger: {
                     trigger: ".testimonials-section",
                     start: "top 80%",
@@ -54,7 +54,7 @@ const LandingPage = () => {
             ".future-feature-card",
             { opacity: 0, y: 50 },
             {
-                opacity: 1, y: 0, duration: 1.5, stagger: 0.3,
+                opacity: 1, y: 0, duration: 1, stagger: 0.3,
                 scrollTrigger: {
                     trigger: ".future-features-section",
                     start: "top 80%",
@@ -71,21 +71,47 @@ const LandingPage = () => {
 
     return (
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-black to-indigo-900 text-gray-100 font-sans">
-            {/* Header */}
-            {/* <header className="w-full py-6 px-10 flex justify-between items-center z-10 bg-opacity-70 text-white">
-                <div className="flex items-center flex-shrink-0">
-                    <Link to="/">
-                        <h1 className="text-3xl font-bold" style={{ fontFamily: 'Koulen', color: '#f6f6f6' }}>
-                            Jobossy
-                        </h1>
-                    </Link>
-                </div>
-                <nav className="space-x-6">
-                    <Link to="/login" className="text-lg text-gray-100 hover:text-indigo-300">Login</Link>
-                    <Link to="/signup" className="text-lg text-gray-100 hover:text-indigo-300">Signup</Link>
-                    <Link to="/how-to-use" className="text-lg text-gray-100 hover:text-indigo-300">How To Use</Link>
-                </nav>
-            </header> */}
+            <head>
+                <title>Supercharge Your Job Hunt with Jobossy</title>
+                <meta name="description" content="Effortlessly track and organize your job applications with Jobossy. Save time and get AI-powered assistance for the ultimate job search experience." />
+                <meta name="keywords" content="job tracking, job search automation, AI job suggestions, resume builder, job application tracker" />
+                <meta name="author" content="Jobossy Team" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+                {/* Open Graph Tags */}
+                <meta property="og:title" content="Supercharge Your Job Hunt with Jobossy" />
+                <meta property="og:description" content="Effortlessly track and organize your job applications with Jobossy. Save time and get AI-powered assistance for the ultimate job search experience." />
+                <meta property="og:image" content="https://jobossy.xyz/images/landing-page-hero.png" />
+                <meta property="og:url" content="https://jobossy.xyz/" />
+                <meta property="og:type" content="website" />
+
+                {/* Twitter Card */}
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="Supercharge Your Job Hunt with Jobossy" />
+                <meta name="twitter:description" content="Effortlessly track and organize your job applications with Jobossy." />
+                <meta name="twitter:image" content="https://jobossy.xyz/images/landing-page-hero.png" />
+
+                {/* Structured Data */}
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "WebPage",
+                        "name": "Supercharge Your Job Hunt",
+                        "description": "Effortlessly track and organize your job applications with Jobossy.",
+                        "url": "https://jobossy.xyz/",
+                        "publisher": {
+                            "@type": "Organization",
+                            "name": "Jobossy",
+                            "url": "https://jobossy.xyz/",
+                            "logo": "https://jobossy.xyz/images/logo.png"
+                        }
+                    })}
+                </script>
+
+                {/* Canonical URL */}
+                <link rel="canonical" href="https://jobossy.xyz/" />
+            </head>
+
             <NavigationBar />
 
             {/* Hero Section */}
@@ -103,30 +129,6 @@ const LandingPage = () => {
                     >
                         Get Started
                     </Link>
-                </div>
-            </section>
-
-            {/* Features Section */}
-            <section className="features-section py-24 bg-gray-900 text-white">
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-800 via-black to-indigo-900 opacity-80"></div>
-                <div className="max-w-6xl mx-auto text-center relative z-10">
-                    <h2 className="font-bold mb-12 bg-gradient-to-r from-pink-500 to-purple-500 text-transparent bg-clip-text animate-fadeIn">
-                        Why Choose Us
-                    </h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <FeatureCard
-                            title="Track Your Applications"
-                            description="Easily track every job you apply to, keeping a detailed record of each step in the process."
-                        />
-                        <FeatureCard
-                            title="Stay Organized"
-                            description="Keep all your job applications organized in one simple dashboard, making it easy to follow up and stay on track."
-                        />
-                        <FeatureCard
-                            title="Time-saving Automation"
-                            description="Reduce the stress of manual tracking. We automate the process so you can focus on preparing for interviews."
-                        />
-                    </div>
                 </div>
             </section>
 
@@ -182,20 +184,17 @@ const LandingPage = () => {
                         </div>
                         <div className="testimonial-card bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:scale-105">
                             <p className="text-lg text-gray-200 italic mb-4">
-                                “I saved so much time and stress by automating my applications!”
+                                “This tool made my job hunt effortless and efficient.”
                             </p>
-                            <h4 className="text-teal-400 font-semibold">- Julian</h4>
+                            <h4 className="text-teal-400 font-semibold">- Nandini</h4>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Footer */}
             <Footer />
         </div>
     );
-
-
 };
 
 export default LandingPage;

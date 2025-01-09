@@ -9,6 +9,7 @@ import { FiDownload } from 'react-icons/fi';
 import * as XLSX from 'xlsx';
 import Footer from '../components/Footer';
 import { AiOutlineMail } from 'react-icons/ai';
+import { Helmet } from 'react-helmet';
 
 const Dashboard = () => {
     const userEmail = localStorage.getItem('userEmail');
@@ -210,69 +211,91 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-900 via-black to-indigo-800 text-gray-100 font-sans pt-0">
-            <NavigationBar />
-            {/* Content Section */}
-            <div className="flex-1 max-w-full mx-auto bg-gray-800 p-8 mt-8 rounded-3xl shadow-xl overflow-hidden mb-12">
-                <div className="flex justify-between items-center mb-8">
-                    <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#ff0088] to-[#ff8800]">
-                        Your Applications
-                    </h2>
-                    <div className="flex items-center space-x-4">
-                        {/* Connect Gmail Icon with matching style */}
-                        {!isGmailConnected && !localStorage.getItem('isGmailConnected') && (
+        <>
+            <Helmet>
+                <title>Job Applications Dashboard - Manage Your Applications</title>
+                <meta
+                    name="description"
+                    content="Efficiently manage your job applications with Jobossy's Dashboard. Filter, sort, and export your applications seamlessly."
+                />
+                <meta
+                    name="keywords"
+                    content="Job Dashboard, Job Applications, Export to Excel, Gmail Integration, Job Management"
+                />
+                <meta name="robots" content="index, follow" />
+                <link rel="canonical" href={window.location.href} />
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "WebPage",
+                        "name": "Job Applications Dashboard",
+                        "description": "Manage your job applications efficiently with Jobossy's dashboard. Features include Gmail integration and export options.",
+                        "url": window.location.href,
+                    })}
+                </script>
+            </Helmet>
+
+            <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-900 via-black to-indigo-800 text-gray-100 font-sans pt-0">
+                <NavigationBar />
+                {/* Content Section */}
+                <div className="flex-1 max-w-full mx-auto bg-gray-800 p-8 mt-8 rounded-3xl shadow-xl overflow-hidden mb-12">
+                    <div className="flex justify-between items-center mb-8">
+                        <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#ff0088] to-[#ff8800]">
+                            Your Applications
+                        </h2>
+                        <div className="flex items-center space-x-4">
+                            {/* Connect Gmail Icon with matching style */}
+                            {!isGmailConnected && !localStorage.getItem('isGmailConnected') && (
+                                <button
+                                    onClick={handleGmailButtonClick} // Check localStorage before opening Gmail popup
+                                    className="p-3 rounded-full bg-gray-700 hover:bg-[#ff0088] text-white shadow-md transition ease-in-out duration-300"
+                                    title="Connect to Gmail"
+                                >
+                                    <AiOutlineMail className="text-2xl" />
+                                </button>
+                            )}
                             <button
-                                onClick={handleGmailButtonClick} // Check localStorage before opening Gmail popup
+                                onClick={exportToExcel}
                                 className="p-3 rounded-full bg-gray-700 hover:bg-[#ff0088] text-white shadow-md transition ease-in-out duration-300"
-                                title="Connect to Gmail"
+                                title="Export to Excel"
                             >
-                                <AiOutlineMail className="text-2xl" />
+                                <FiDownload className="text-xl" />
                             </button>
-                        )}
-                        <button
-                            onClick={exportToExcel}
-                            className="p-3 rounded-full bg-gray-700 hover:bg-[#ff0088] text-white shadow-md transition ease-in-out duration-300"
-                            title="Export to Excel"
-                        >
-                            <FiDownload className="text-xl" />
-                        </button>
+                        </div>
                     </div>
+
+                    <SearchBar
+                        searchQuery={searchQuery}
+                        onSearchChange={handleSearch}
+                        onClearSearch={handleClearSearch}
+                    />
+
+                    <ApplicationTable
+                        applications={filteredApplications}
+                        onSort={handleSort}
+                        sortBy={sortBy}
+                        sortOrder={sortOrder}
+                        onPageLoad={loadMoreApplications}
+                        updateApplication={updateApplication}
+                    />
+
+                    {/* Show Gmail Popup on button click */}
+                    {showGmailPopup && (
+                        <GmailPopup
+                            isConnected={isGmailConnected}
+                            onConnect={() => {
+                                setIsGmailConnected(true);
+                            }}
+                            onClose={() => setShowGmailPopup(false)} // Option to close the popup
+                        />
+                    )}
                 </div>
 
-                <SearchBar
-                    searchQuery={searchQuery}
-                    onSearchChange={handleSearch}
-                    onClearSearch={handleClearSearch}
-                />
-
-                <ApplicationTable
-                    applications={filteredApplications}
-                    onSort={handleSort}
-                    sortBy={sortBy}
-                    sortOrder={sortOrder}
-                    onPageLoad={loadMoreApplications}
-                    updateApplication={updateApplication}
-                />
-
-                {/* Show Gmail Popup on button click */}
-                {showGmailPopup && (
-                    <GmailPopup
-                        isConnected={isGmailConnected}
-                        onConnect={() => {
-                            setIsGmailConnected(true);
-                        }}
-                        onClose={() => setShowGmailPopup(false)} // Option to close the popup
-                    />
-                )}
+                {/* Footer Section */}
+                <Footer />
             </div>
-
-            {/* Footer Section */}
-            <Footer />
-        </div>
-
+        </>
     );
 };
-
-
 
 export default Dashboard;

@@ -123,7 +123,7 @@ const NavigationBar = () => {
                 {isLoggedIn && (
                     <Link
                         to="/login"
-                        className={`hidden md:flex items-center py-2 px-5 rounded-lg bg-blue-600 text-white font-medium text-sm hover:bg-blue-500 transition duration-300 shadow-md ${isAboutUsPage ? 'bg-transparent' : ''
+                        className={`hidden md:flex items-center py-2 px-5 rounded-lg bg-blue-600 text-white font-medium text-sm hover:bg-blue-500 transition duration-300 shadow-md
                             }`}
                         onClick={() => {
                             localStorage.removeItem('authToken');
