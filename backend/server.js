@@ -47,12 +47,14 @@ const authRoutes = require('./routes/auth');
 const applicationRoutes = require('./routes/applications');
 const scrapeRoutes = require('./routes/scrape');
 const aiRoutes = require('./routes/ai');
+const sendEmails = require('./routes/sendEmail');
 
 // Routes
 app.use('/api/auth', authRoutes); // Authentication routes
 app.use('/api/app', applicationRoutes); // Application-related routes
 app.use('/api/scrape', scrapeRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/send', sendEmails);
 
 // Server Start
 const PORT = 3000;
