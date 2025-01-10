@@ -2,10 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowUp, FaArrowDown, FaTags, FaPlus, FaMinus } from 'react-icons/fa';
 import { FiDownload, FiEdit } from 'react-icons/fi';
+import { FaTrash } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import API_CONFIG from '../apiConfig';
+import ConfirmationPopup from './ConfirmationComponent';
 
-const ApplicationTable = ({ applications, onSort, sortBy, sortOrder, onPageLoad, updateApplication }) => {
+const ApplicationTable = ({ applications, onSort, sortBy, sortOrder, onPageLoad, updateApplication, onDeleteApplication }) => {
     const userEmail = localStorage.getItem('userEmail');
     const authToken = localStorage.getItem('authToken');
 
@@ -21,6 +23,9 @@ const ApplicationTable = ({ applications, onSort, sortBy, sortOrder, onPageLoad,
     const [expandedRows, setExpandedRows] = useState({});
     const [linkedinProfiles, setLinkedinProfiles] = useState({});
     const [isLoading, setIsLoading] = useState(false); // Loader state
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [selectedAppId, setSelectedAppId] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const lastRowRef = (node) => {
         if (observer.current) observer.current.disconnect();
@@ -46,6 +51,47 @@ const ApplicationTable = ({ applications, onSort, sortBy, sortOrder, onPageLoad,
         updateApplication(selectedApp._id, { tags: tagsInput.split(',').map((tag) => tag.trim()) });
         setTagsPopupVisible(false);
         setSelectedApp(null);
+    };
+
+    const handleDeleteClick = (appId) => {
+        setSelectedAppId(appId);
+        setIsPopupOpen(true);
+    };
+
+    const handleConfirmDelete = () => {
+        if (selectedAppId) {
+            deleteApplication(selectedAppId);
+            setIsPopupOpen(false);
+            setSelectedAppId(null);
+        }
+    };
+
+    const deleteApplication = async (appId) => {
+        setLoading(true);
+        try {
+            const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.APPLICATION.DELETE}/${appId}`, {
+                method: 'DELETE',
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete application');
+            }
+
+            // Update the UI by filtering out the deleted application
+            // setApplications((prevApps) => prevApps.filter((app) => app._id !== appId));
+            onDeleteApplication(appId);
+        } catch (error) {
+            console.error('Error deleting application:', error);
+            alert('Failed to delete application. Please try again.');
+        } finally {
+            setLoading(false);
+            setIsPopupOpen(false);
+            setSelectedAppId(null);
+        }
     };
 
     const handleRowClick = (app) => {
@@ -142,7 +188,7 @@ const ApplicationTable = ({ applications, onSort, sortBy, sortOrder, onPageLoad,
                             </th>
                             <th className="p-4 text-left">Tags</th>
                             <th className="p-4 text-left">Notes</th>
-                            {/* <th className="p-4 text-left">Actions</th> */}
+                            <th className="p-4 text-left">Actions</th>
                         </tr>
                     </thead>
 
@@ -231,19 +277,14 @@ const ApplicationTable = ({ applications, onSort, sortBy, sortOrder, onPageLoad,
                                                     </button>
                                                 )}
                                             </td>
-                                            {/* <td className="p-4">
-                                            <button
-                                                className="text-sm text-green-400 hover:underline flex items-center"
-                                                onClick={() => toggleExpandRow(app._id)}
-                                            >
-                                                {isExpanded ? (
-                                                    <FaMinus className="inline-block mr-2 text-lg" />
-                                                ) : (
-                                                    <FaPlus className="inline-block mr-2 text-lg" />
-                                                )}
-                                                {isExpanded ? 'Collapse' : 'Expand'}
-                                            </button>
-                                            </td> */}
+                                            <td className="p-4">
+                                                <button
+                                                    onClick={() => handleDeleteClick(app._id)}
+                                                    className="text-red-500 hover:bg-red-700 hover:text-white p-2 rounded-md"
+                                                >
+                                                    <FaTrash />
+                                                </button>
+                                            </td>
                                         </tr>
 
                                         {isExpanded && profiles.length > 0 && (
@@ -288,6 +329,13 @@ const ApplicationTable = ({ applications, onSort, sortBy, sortOrder, onPageLoad,
             {/* </div> */}
 
 
+            {/* Confirmation Popup */}
+            <ConfirmationPopup
+                isOpen={isPopupOpen}
+                onClose={() => setIsPopupOpen(false)}
+                onConfirm={handleConfirmDelete}
+                message="Are you sure you want to delete this application?"
+            />
 
 
 

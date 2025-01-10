@@ -95,4 +95,30 @@ router.put('/updateApplication', authenticate, async (req, res) => {
     }
 });
 
+router.delete('/delete/:id', authenticate, async (req, res) => {
+    const applicationId = req.params.id;
+    const userEmail = req.user.email; // Assuming `authenticate` middleware attaches `user` to `req`.
+
+    try {
+        // Find the application by ID and ensure the user owns it
+        const application = await Application.findOne({ _id: applicationId });
+
+        if (!application) {
+            return res.status(404).json({ message: 'Application not found' });
+        }
+
+        if (application.user_email !== userEmail) {
+            return res.status(403).json({ message: 'Unauthorized access to delete this application' });
+        }
+
+        // Delete the application
+        await Application.deleteOne({ _id: applicationId });
+        res.status(200).json({ message: 'Application deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting application:', error);
+        res.status(500).json({ error: 'Failed to delete application' });
+    }
+});
+
+
 module.exports = router;

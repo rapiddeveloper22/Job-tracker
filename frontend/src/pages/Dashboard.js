@@ -64,7 +64,14 @@ const Dashboard = () => {
         if (gmailConnected) {
             setIsGmailConnected(true);
         }
-    }, [userEmail, authToken]);
+    }, [userEmail, authToken, applications]);
+
+    const onDeleteApplication = (id) => {
+        // Filter out the deleted application from the state
+        setApplications((prevApplications) =>
+            prevApplications.filter((application) => application._id !== id)
+        );
+    };
 
     const handleLogout = () => {
         localStorage.removeItem('userEmail');
@@ -277,6 +284,7 @@ const Dashboard = () => {
                         sortOrder={sortOrder}
                         onPageLoad={loadMoreApplications}
                         updateApplication={updateApplication}
+                        onDeleteApplication={onDeleteApplication}
                     />
 
                     {/* Show Gmail Popup on button click */}
