@@ -87,6 +87,7 @@ function waitForPageLoad() {
 function extractJSON(rawResponse) {
     try {
         // const cleanedString = rawResponse.replace(/```[a-z]*\n|```/g, "").trim();
+        console.log(rawResponse);
         const cleanedString = rawResponse.replace(/```json\n|```/g, '').trim();
         return JSON.parse(cleanedString);
     } catch (error) {
@@ -158,8 +159,8 @@ async function scrapeAndProcess() {
                 console.log("Careers page detected. Proceeding with further processing...");
 
                 // Detect form fields on the page
-                const formFields = detectFormFields();
-                console.log("Detected form fields:", formFields);
+                // const formFields = detectFormFields();
+                // console.log("Detected form fields:", formFields);
 
                 chrome.runtime.sendMessage({ action: "checkLoginStatus" }, (response) => {
                     if (response && response.authToken) {

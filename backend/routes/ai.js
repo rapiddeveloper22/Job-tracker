@@ -12,7 +12,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // Define the Gemini API endpoint and API key (replace with actual)
-const GEMINI_API_KEY = 'AIzaSyCRTW69xL9c7Ht8Wo7MwN5Fk6UupDQalEU'; // Replace with your actual API key
+const GEMINI_API_KEY = 'AIzaSyDgYFVsAREnrIGR7aa2ZuojNMoy4BWTyK0'; // Replace with your actual API key
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 const queryGemini = async (prompt) => {
@@ -227,7 +227,7 @@ router.post('/extensionCall', authenticate, async (req, res) => {
             throw new Error('Failed to generate application check.');
         }
 
-        console.log(applicationCheck);
+        // console.log(applicationCheck);
 
         // Respond with the referral message
         res.json({ applicationCheck });

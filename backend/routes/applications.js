@@ -9,9 +9,10 @@ router.post('/apply', authenticate, async (req, res) => {
 
     // Remove the if condition once the latest chrome extension gets approved
     var isRoleNamePresent = (role_name.toLowerCase() != "no" && role_name.toLowerCase() != "na");
-    // var isApplicationSubmitted = (application_submitted.toLowerCase() != "no")
+    var isApplicationSubmitted = (application_submitted.toLowerCase() != "no")
+    console.log("Application submitted" + isApplicationSubmitted);
 
-    if (is_careers_page != "na" && isRoleNamePresent) {
+    if (is_careers_page != "na" && isRoleNamePresent && isApplicationSubmitted) {
         console.log("Received /apply request with:", req.body);
 
         try {
